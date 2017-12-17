@@ -1,0 +1,180 @@
+glove
+Using embedding ../data/glove.6B.50d.txt
+Using TensorFlow backend.
+Loading data... - INFO - Prompt id is 1
+Loading data... - INFO - Creating vocabulary from: ../data/train.tsv
+Loading data... - INFO -   724840 total words, 16271 unique words
+Loading data... - INFO -   Vocab size: 4000
+Loading data... - INFO - Reading dataset from: ../data/train.tsv
+Loading data... - INFO - Reading dataset from: ../data/dev.tsv
+Loading data... - INFO - Reading dataset from: ../data/dev.tsv
+Loading data... - INFO - Training data max sentence num = 71, max sentence length = 50
+Loading data... - INFO - Dev data max sentence num = -1, max sentence length = -1
+Loading data... - INFO - Test data max sentence num = -1, max sentence length = -1
+Loading data... - INFO - Overall max sentence num = 71, max sentence length = 50
+/scratch/yz3464/NLP/aes/data_prepare.py:32: RuntimeWarning: Mean of empty slice.
+  dev_mean = y_dev.mean(axis=0)
+/share/apps/numpy/1.13.1/intel/lib/python2.7/site-packages/numpy-1.13.1-py2.7-linux-x86_64.egg/numpy/core/_methods.py:135: RuntimeWarning: Degrees of freedom <= 0 for slice
+  keepdims=keepdims)
+/scratch/yz3464/NLP/aes/data_prepare.py:34: RuntimeWarning: Mean of empty slice.
+  test_mean = y_test.mean(axis=0)
+Prepare data ... - INFO - Statistics:
+Prepare data ... - INFO -   train X shape: (1783, 71, 50)
+Prepare data ... - INFO -   dev X shape:   (0, 71, 50)
+Prepare data ... - INFO -   test X shape:  (0, 71, 50)
+Prepare data ... - INFO -   train Y shape: (1783, 1)
+Prepare data ... - INFO -   dev Y shape:   (0, 1)
+Prepare data ... - INFO -   test Y shape:  (0, 1)
+Prepare data ... - INFO -   train_y mean: [ 8.52832317], stdev: [ 1.53813362], train_y mean after scaling: [ 0.65283233]
+Prepare data ... - INFO - Loading GloVe ...
+Prepare data ... - INFO - OOV number =343, OOV ratio = 0.085771
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - X_train shape: (1249, 3550)
+Namespace(batch_size=10, char_embedd_dim=30, char_nbfilters=20, checkpoint_path='../checkpoint', dev='../data/dev.tsv', dropout=0.5, embedding='glove', embedding_dict='../data/glove.6B.50d.txt', embedding_dim=50, filter1_len=5, filter2_len=3, fine_tune=True, init_bias=False, l2_value=None, learning_rate=0.001, lstm_units=100, mode='mot', nbfilters=100, num_epochs=50, oov='embedding', optimizer='rmsprop', prompt_id=1, rnn_type='LSTM', test='../data/dev.tsv', train='../data/train.tsv', train_flag=True, use_char=False, vocab_size=4000)
+Build model - INFO - Model parameters: max_sentnum = 71, max_sentlen = 50, embedding dim = 50, nbfilters = 100, filter1_len = 5, drop rate = 0.5
+W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use SSE3 instructions, but these are available on your machine and could speed up CPU computations.
+W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use SSE4.1 instructions, but these are available on your machine and could speed up CPU computations.
+W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use SSE4.2 instructions, but these are available on your machine and could speed up CPU computations.
+W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use AVX instructions, but these are available on your machine and could speed up CPU computations.
+W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use AVX2 instructions, but these are available on your machine and could speed up CPU computations.
+W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use FMA instructions, but these are available on your machine and could speed up CPU computations.
+/scratch/yz3464/NLP/aes/hier_networks.py:103: UserWarning: Update your `Conv1D` call to the Keras 2 API: `Conv1D(100, 5, padding="valid")`
+  zcnn = TimeDistributed(Convolution1D(opts.nbfilters, opts.filter1_len, border_mode='valid'), name='zcnn')(resh_W)
+Build model - INFO - Use mean-over-time pooling on sentence
+Build model - INFO - Use mean-over-time pooling on text
+/scratch/yz3464/NLP/aes/hier_networks.py:143: UserWarning: Update your `Dense` call to the Keras 2 API: `Dense(units=1, activation="sigmoid", name="output")`
+  y = Dense(output_dim=1, activation='sigmoid', name='output')(avg_hz_lstm)
+/scratch/yz3464/NLP/aes/hier_networks.py:148: UserWarning: Update your `Model` call to the Keras 2 API: `Model(outputs=Tensor("ou..., inputs=Tensor("wo...)`
+  model = Model(input=word_input, output=y)
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+word_input (InputLayer)      (None, 3550)              0         
+_________________________________________________________________
+x (Embedding)                (None, 3550, 50)          200000    
+_________________________________________________________________
+x_maskedout (ZeroMaskedEntri (None, 3550, 50)          0         
+_________________________________________________________________
+drop_x (Dropout)             (None, 3550, 50)          0         
+_________________________________________________________________
+resh_W (Reshape)             (None, 71, 50, 50)        0         
+_________________________________________________________________
+zcnn (TimeDistributed)       (None, 71, 46, 100)       25100     
+_________________________________________________________________
+avg_zcnn (TimeDistributed)   (None, 71, 100)           0         
+_________________________________________________________________
+hz_lstm (LSTM)               (None, 71, 100)           80400     
+_________________________________________________________________
+avg_hz_lstm (GlobalAveragePo (None, 100)               0         
+_________________________________________________________________
+output (Dense)               (None, 1)                 101       
+=================================================================
+Total params: 305,601.0
+Trainable params: 305,601.0
+Non-trainable params: 0.0
+_________________________________________________________________
+Build model - INFO - Model compiled in 0.0159 s
+(1249, 3550)
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Initial evaluation: 
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Train model
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 1/50
+hi_LSTM-CNN.py:161: UserWarning: The `nb_epoch` argument in `fit` has been renamed `epochs`.
+  history = model.fit(X_train, Y_train, batch_size=args.batch_size, nb_epoch=1, verbose=0, shuffle=True)
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 39.462 s
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 2/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 38.589 s
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 3/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 38.226 s
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 4/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 37.969 s
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 5/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 38.082 s
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 6/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 38.169 s
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 7/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 38.295 s
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 8/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 37.888 s
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 9/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 37.809 s
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 10/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 37.761 s
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 11/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 37.814 s
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 12/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 37.670 s
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 13/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 37.961 s
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 14/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 37.533 s
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 15/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 37.786 s
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 16/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 38.726 s
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 17/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 38.516 s
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 18/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 38.203 s
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 19/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 37.948 s
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 20/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 37.742 s
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 21/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 38.000 s
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 22/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 37.485 s
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 23/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 37.351 s
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 24/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 37.288 s
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 25/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 37.697 s
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 26/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 37.977 s
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 27/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 37.250 s
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 28/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 37.453 s
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 29/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 37.463 s
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 30/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 37.423 s
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 31/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 37.325 s
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 32/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 37.609 s
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 33/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 37.402 s
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 34/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 37.270 s
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 35/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 37.646 s
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 36/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 37.552 s
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 37/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 37.342 s
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 38/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 37.306 s
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 39/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 37.348 s
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 40/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 37.298 s
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 41/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 37.499 s
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 42/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 37.243 s
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 43/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 37.702 s
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 44/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 37.365 s
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 45/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 37.370 s
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 46/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 37.454 s
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 47/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 37.204 s
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 48/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 37.485 s
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 49/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 37.339 s
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 50/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 37.989 s

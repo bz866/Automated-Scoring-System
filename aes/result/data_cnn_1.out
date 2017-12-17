@@ -1,0 +1,337 @@
+glove
+Using embedding ../data/glove.6B.50d.txt
+Using TensorFlow backend.
+Loading data... - INFO - Prompt id is 1
+Loading data... - INFO - Creating vocabulary from: ../data/train.tsv
+Loading data... - INFO -   724840 total words, 16271 unique words
+Loading data... - INFO -   Vocab size: 4000
+Loading data... - INFO - Reading dataset from: ../data/train.tsv
+Loading data... - INFO - Reading dataset from: ../data/dev.tsv
+Loading data... - INFO - Reading dataset from: ../data/test.tsv
+Loading data... - INFO - Training data max sentence num = 71, max sentence length = 50
+Loading data... - INFO - Dev data max sentence num = -1, max sentence length = -1
+Loading data... - INFO - Test data max sentence num = -1, max sentence length = -1
+Loading data... - INFO - Overall max sentence num = 71, max sentence length = 50
+/scratch/yz3464/NLP/aes/data_prepare.py:32: RuntimeWarning: Mean of empty slice.
+  dev_mean = y_dev.mean(axis=0)
+/share/apps/numpy/1.13.1/intel/lib/python2.7/site-packages/numpy-1.13.1-py2.7-linux-x86_64.egg/numpy/core/_methods.py:135: RuntimeWarning: Degrees of freedom <= 0 for slice
+  keepdims=keepdims)
+/scratch/yz3464/NLP/aes/data_prepare.py:34: RuntimeWarning: Mean of empty slice.
+  test_mean = y_test.mean(axis=0)
+Prepare data ... - INFO - Statistics:
+Prepare data ... - INFO -   train X shape: (1783, 71, 50)
+Prepare data ... - INFO -   dev X shape:   (0, 71, 50)
+Prepare data ... - INFO -   test X shape:  (0, 71, 50)
+Prepare data ... - INFO -   train Y shape: (1783, 1)
+Prepare data ... - INFO -   dev Y shape:   (0, 1)
+Prepare data ... - INFO -   test Y shape:  (0, 1)
+Prepare data ... - INFO -   train_y mean: [ 8.52832317], stdev: [ 1.53813362], train_y mean after scaling: [ 0.65283233]
+Prepare data ... - INFO - Loading GloVe ...
+Prepare data ... - INFO - OOV number =343, OOV ratio = 0.085771
+Train sentence sequences HCNN - INFO - X_train shape: (1249, 3550)
+Build model - INFO - Model parameters: max_sentnum = 71, max_sentlen = 50, embedding dim = 50, nbfilters = 100, filter1_len = 5, filter2_len = 3, drop rate = 0.5, l2 = 0.01
+W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use SSE3 instructions, but these are available on your machine and could speed up CPU computations.
+W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use SSE4.1 instructions, but these are available on your machine and could speed up CPU computations.
+W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use SSE4.2 instructions, but these are available on your machine and could speed up CPU computations.
+W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use AVX instructions, but these are available on your machine and could speed up CPU computations.
+W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use AVX2 instructions, but these are available on your machine and could speed up CPU computations.
+W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use FMA instructions, but these are available on your machine and could speed up CPU computations.
+/scratch/yz3464/NLP/aes/hier_networks.py:49: UserWarning: Update your `Conv1D` call to the Keras 2 API: `Conv1D(100, 5, padding="valid")`
+  z = TimeDistributed(Convolution1D(opts.nbfilters, opts.filter1_len, border_mode='valid'), name='z')(resh_W)
+/scratch/yz3464/NLP/aes/hier_networks.py:51: UserWarning: Update your `AveragePooling1D` call to the Keras 2 API: `AveragePooling1D(pool_size=46)`
+  avg_z = TimeDistributed(AveragePooling1D(pool_length=L-opts.filter1_len+1), name='avg_z')(z)	# shape= (N, 1, nbfilters)
+/scratch/yz3464/NLP/aes/hier_networks.py:55: UserWarning: Update your `Conv1D` call to the Keras 2 API: `Conv1D(100, 3, padding="valid", name="hz")`
+  hz = Convolution1D(opts.nbfilters, opts.filter2_len, border_mode='valid', name='hz')(resh_z)
+/scratch/yz3464/NLP/aes/hier_networks.py:59: UserWarning: Update your `Dense` call to the Keras 2 API: `Dense(units=1, activation="sigmoid", name="output")`
+  y = Dense(output_dim=1, activation='sigmoid', name='output')(avg_hz)
+/scratch/yz3464/NLP/aes/hier_networks.py:61: UserWarning: Update your `Model` call to the Keras 2 API: `Model(outputs=Tensor("ou..., inputs=Tensor("wo...)`
+  model = Model(input=word_input, output=y)
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+word_input (InputLayer)      (None, 3550)              0         
+_________________________________________________________________
+x (Embedding)                (None, 3550, 50)          200000    
+_________________________________________________________________
+drop_x (Dropout)             (None, 3550, 50)          0         
+_________________________________________________________________
+resh_W (Reshape)             (None, 71, 50, 50)        0         
+_________________________________________________________________
+z (TimeDistributed)          (None, 71, 46, 100)       25100     
+_________________________________________________________________
+avg_z (TimeDistributed)      (None, 71, 1, 100)        0         
+_________________________________________________________________
+resh_z (Reshape)             (None, 71, 100)           0         
+_________________________________________________________________
+hz (Conv1D)                  (None, 69, 100)           30100     
+_________________________________________________________________
+avg_hz (GlobalAveragePooling (None, 100)               0         
+_________________________________________________________________
+output (Dense)               (None, 1)                 101       
+=================================================================
+Total params: 255,301.0
+Trainable params: 255,301.0
+Non-trainable params: 0.0
+_________________________________________________________________
+Build model - INFO - Model compiled in 0.0182 s
+Train sentence sequences HCNN - INFO - Initial evaluation: 
+Evaluate stats - INFO - [DEV]   QWK:  0.000, PRS: 0.000, SPR: 0.000, RMSE: 2.127, (Best @ -1: {{0.000}}, 0.000, 0.000, 2.127)
+Evaluate stats - INFO - [TEST]  QWK:  0.000, PRS: 0.000, SPR: 0.000, RMSE: 2.152 (Best @ -1: {{0.000}}, 0.000, 0.000, 2.152)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Train model
+Train sentence sequences HCNN - INFO - Epoch 1/50
+hi_CNN.py:136: UserWarning: The `nb_epoch` argument in `fit` has been renamed `epochs`.
+  history = model.fit(X_train, Y_train, batch_size=args.batch_size, nb_epoch=1, verbose=0, shuffle=True)
+Train sentence sequences HCNN - INFO - Training one epoch in 25.884 s
+Evaluate stats - INFO - [DEV]   QWK:  0.712, PRS: 0.765, SPR: 0.733, RMSE: 1.087, (Best @ 1: {{0.712}}, 0.765, 0.733, 1.087)
+Evaluate stats - INFO - [TEST]  QWK:  0.735, PRS: 0.795, SPR: 0.767, RMSE: 1.019 (Best @ 1: {{0.735}}, 0.795, 0.767, 1.019)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 2/50
+Train sentence sequences HCNN - INFO - Training one epoch in 25.549 s
+Evaluate stats - INFO - [DEV]   QWK:  0.582, PRS: 0.768, SPR: 0.736, RMSE: 1.271, (Best @ 1: {{0.712}}, 0.765, 0.733, 1.087)
+Evaluate stats - INFO - [TEST]  QWK:  0.589, PRS: 0.756, SPR: 0.735, RMSE: 1.243 (Best @ 1: {{0.735}}, 0.795, 0.767, 1.019)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 3/50
+Train sentence sequences HCNN - INFO - Training one epoch in 25.594 s
+Evaluate stats - INFO - [DEV]   QWK:  0.654, PRS: 0.772, SPR: 0.760, RMSE: 1.165, (Best @ 1: {{0.712}}, 0.765, 0.733, 1.087)
+Evaluate stats - INFO - [TEST]  QWK:  0.703, PRS: 0.786, SPR: 0.756, RMSE: 1.055 (Best @ 1: {{0.735}}, 0.795, 0.767, 1.019)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 4/50
+Train sentence sequences HCNN - INFO - Training one epoch in 25.445 s
+Evaluate stats - INFO - [DEV]   QWK:  0.637, PRS: 0.774, SPR: 0.761, RMSE: 1.195, (Best @ 1: {{0.712}}, 0.765, 0.733, 1.087)
+Evaluate stats - INFO - [TEST]  QWK:  0.667, PRS: 0.779, SPR: 0.759, RMSE: 1.122 (Best @ 1: {{0.735}}, 0.795, 0.767, 1.019)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 5/50
+Train sentence sequences HCNN - INFO - Training one epoch in 25.436 s
+Evaluate stats - INFO - [DEV]   QWK:  0.719, PRS: 0.779, SPR: 0.757, RMSE: 1.011, (Best @ 5: {{0.719}}, 0.779, 0.757, 1.011)
+Evaluate stats - INFO - [TEST]  QWK:  0.755, PRS: 0.811, SPR: 0.794, RMSE: 0.899 (Best @ 5: {{0.755}}, 0.811, 0.794, 0.899)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 6/50
+Train sentence sequences HCNN - INFO - Training one epoch in 25.277 s
+Evaluate stats - INFO - [DEV]   QWK:  0.766, PRS: 0.795, SPR: 0.783, RMSE: 0.933, (Best @ 6: {{0.766}}, 0.795, 0.783, 0.933)
+Evaluate stats - INFO - [TEST]  QWK:  0.777, PRS: 0.801, SPR: 0.788, RMSE: 0.884 (Best @ 6: {{0.777}}, 0.801, 0.788, 0.884)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 7/50
+Train sentence sequences HCNN - INFO - Training one epoch in 25.091 s
+Evaluate stats - INFO - [DEV]   QWK:  0.783, PRS: 0.797, SPR: 0.786, RMSE: 0.920, (Best @ 7: {{0.783}}, 0.797, 0.786, 0.920)
+Evaluate stats - INFO - [TEST]  QWK:  0.786, PRS: 0.805, SPR: 0.787, RMSE: 0.874 (Best @ 7: {{0.786}}, 0.805, 0.787, 0.874)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 8/50
+Train sentence sequences HCNN - INFO - Training one epoch in 25.146 s
+Evaluate stats - INFO - [DEV]   QWK:  0.765, PRS: 0.798, SPR: 0.783, RMSE: 0.941, (Best @ 7: {{0.783}}, 0.797, 0.786, 0.920)
+Evaluate stats - INFO - [TEST]  QWK:  0.769, PRS: 0.802, SPR: 0.777, RMSE: 0.912 (Best @ 7: {{0.786}}, 0.805, 0.787, 0.874)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 9/50
+Train sentence sequences HCNN - INFO - Training one epoch in 25.168 s
+Evaluate stats - INFO - [DEV]   QWK:  0.780, PRS: 0.798, SPR: 0.787, RMSE: 0.912, (Best @ 7: {{0.783}}, 0.797, 0.786, 0.920)
+Evaluate stats - INFO - [TEST]  QWK:  0.793, PRS: 0.811, SPR: 0.802, RMSE: 0.848 (Best @ 7: {{0.786}}, 0.805, 0.787, 0.874)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 10/50
+Train sentence sequences HCNN - INFO - Training one epoch in 25.032 s
+Evaluate stats - INFO - [DEV]   QWK:  0.752, PRS: 0.788, SPR: 0.781, RMSE: 1.047, (Best @ 7: {{0.783}}, 0.797, 0.786, 0.920)
+Evaluate stats - INFO - [TEST]  QWK:  0.782, PRS: 0.817, SPR: 0.809, RMSE: 0.963 (Best @ 7: {{0.786}}, 0.805, 0.787, 0.874)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 11/50
+Train sentence sequences HCNN - INFO - Training one epoch in 25.006 s
+Evaluate stats - INFO - [DEV]   QWK:  0.792, PRS: 0.799, SPR: 0.791, RMSE: 0.918, (Best @ 11: {{0.792}}, 0.799, 0.791, 0.918)
+Evaluate stats - INFO - [TEST]  QWK:  0.807, PRS: 0.813, SPR: 0.801, RMSE: 0.851 (Best @ 11: {{0.807}}, 0.813, 0.801, 0.851)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 12/50
+Train sentence sequences HCNN - INFO - Training one epoch in 25.222 s
+Evaluate stats - INFO - [DEV]   QWK:  0.766, PRS: 0.797, SPR: 0.785, RMSE: 0.927, (Best @ 11: {{0.792}}, 0.799, 0.791, 0.918)
+Evaluate stats - INFO - [TEST]  QWK:  0.780, PRS: 0.804, SPR: 0.787, RMSE: 0.877 (Best @ 11: {{0.807}}, 0.813, 0.801, 0.851)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 13/50
+Train sentence sequences HCNN - INFO - Training one epoch in 25.027 s
+Evaluate stats - INFO - [DEV]   QWK:  0.792, PRS: 0.811, SPR: 0.803, RMSE: 0.904, (Best @ 13: {{0.792}}, 0.811, 0.803, 0.904)
+Evaluate stats - INFO - [TEST]  QWK:  0.789, PRS: 0.812, SPR: 0.794, RMSE: 0.877 (Best @ 13: {{0.789}}, 0.812, 0.794, 0.877)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 14/50
+Train sentence sequences HCNN - INFO - Training one epoch in 25.168 s
+Evaluate stats - INFO - [DEV]   QWK:  0.765, PRS: 0.800, SPR: 0.787, RMSE: 1.004, (Best @ 13: {{0.792}}, 0.811, 0.803, 0.904)
+Evaluate stats - INFO - [TEST]  QWK:  0.768, PRS: 0.814, SPR: 0.793, RMSE: 0.963 (Best @ 13: {{0.789}}, 0.812, 0.794, 0.877)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 15/50
+Train sentence sequences HCNN - INFO - Training one epoch in 25.013 s
+Evaluate stats - INFO - [DEV]   QWK:  0.650, PRS: 0.801, SPR: 0.801, RMSE: 1.148, (Best @ 13: {{0.792}}, 0.811, 0.803, 0.904)
+Evaluate stats - INFO - [TEST]  QWK:  0.670, PRS: 0.808, SPR: 0.803, RMSE: 1.078 (Best @ 13: {{0.789}}, 0.812, 0.794, 0.877)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 16/50
+Train sentence sequences HCNN - INFO - Training one epoch in 25.074 s
+Evaluate stats - INFO - [DEV]   QWK:  0.542, PRS: 0.776, SPR: 0.772, RMSE: 1.485, (Best @ 13: {{0.792}}, 0.811, 0.803, 0.904)
+Evaluate stats - INFO - [TEST]  QWK:  0.547, PRS: 0.783, SPR: 0.789, RMSE: 1.451 (Best @ 13: {{0.789}}, 0.812, 0.794, 0.877)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 17/50
+Train sentence sequences HCNN - INFO - Training one epoch in 24.961 s
+Evaluate stats - INFO - [DEV]   QWK:  0.635, PRS: 0.798, SPR: 0.796, RMSE: 1.646, (Best @ 13: {{0.792}}, 0.811, 0.803, 0.904)
+Evaluate stats - INFO - [TEST]  QWK:  0.676, PRS: 0.806, SPR: 0.797, RMSE: 1.476 (Best @ 13: {{0.789}}, 0.812, 0.794, 0.877)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 18/50
+Train sentence sequences HCNN - INFO - Training one epoch in 25.055 s
+Evaluate stats - INFO - [DEV]   QWK:  0.000, PRS: 0.000, SPR: 0.000, RMSE: 3.815, (Best @ 13: {{0.792}}, 0.811, 0.803, 0.904)
+Evaluate stats - INFO - [TEST]  QWK:  0.000, PRS: 0.000, SPR: 0.000, RMSE: 3.698 (Best @ 13: {{0.789}}, 0.812, 0.794, 0.877)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 19/50
+Train sentence sequences HCNN - INFO - Training one epoch in 25.041 s
+Evaluate stats - INFO - [DEV]   QWK:  0.080, PRS: 0.508, SPR: 0.378, RMSE: 3.616, (Best @ 13: {{0.792}}, 0.811, 0.803, 0.904)
+Evaluate stats - INFO - [TEST]  QWK:  0.090, PRS: 0.510, SPR: 0.323, RMSE: 3.504 (Best @ 13: {{0.789}}, 0.812, 0.794, 0.877)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 20/50
+Train sentence sequences HCNN - INFO - Training one epoch in 25.060 s
+Evaluate stats - INFO - [DEV]   QWK:  0.301, PRS: 0.657, SPR: 0.731, RMSE: 4.404, (Best @ 13: {{0.792}}, 0.811, 0.803, 0.904)
+Evaluate stats - INFO - [TEST]  QWK:  0.321, PRS: 0.667, SPR: 0.745, RMSE: 4.221 (Best @ 13: {{0.789}}, 0.812, 0.794, 0.877)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 21/50
+Train sentence sequences HCNN - INFO - Training one epoch in 24.895 s
+Evaluate stats - INFO - [DEV]   QWK:  0.175, PRS: 0.528, SPR: 0.379, RMSE: 3.506, (Best @ 13: {{0.792}}, 0.811, 0.803, 0.904)
+Evaluate stats - INFO - [TEST]  QWK:  0.174, PRS: 0.511, SPR: 0.323, RMSE: 3.467 (Best @ 13: {{0.789}}, 0.812, 0.794, 0.877)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 22/50
+Train sentence sequences HCNN - INFO - Training one epoch in 24.985 s
+Evaluate stats - INFO - [DEV]   QWK:  0.042, PRS: 0.323, SPR: 0.134, RMSE: 3.742, (Best @ 13: {{0.792}}, 0.811, 0.803, 0.904)
+Evaluate stats - INFO - [TEST]  QWK:  0.053, PRS: 0.343, SPR: 0.135, RMSE: 3.621 (Best @ 13: {{0.789}}, 0.812, 0.794, 0.877)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 23/50
+Train sentence sequences HCNN - INFO - Training one epoch in 25.643 s
+Evaluate stats - INFO - [DEV]   QWK:  0.123, PRS: 0.438, SPR: 0.256, RMSE: 3.640, (Best @ 13: {{0.792}}, 0.811, 0.803, 0.904)
+Evaluate stats - INFO - [TEST]  QWK:  0.148, PRS: 0.484, SPR: 0.323, RMSE: 3.491 (Best @ 13: {{0.789}}, 0.812, 0.794, 0.877)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 24/50
+Train sentence sequences HCNN - INFO - Training one epoch in 25.794 s
+Evaluate stats - INFO - [DEV]   QWK:  0.251, PRS: 0.555, SPR: 0.433, RMSE: 3.483, (Best @ 13: {{0.792}}, 0.811, 0.803, 0.904)
+Evaluate stats - INFO - [TEST]  QWK:  0.213, PRS: 0.546, SPR: 0.386, RMSE: 3.429 (Best @ 13: {{0.789}}, 0.812, 0.794, 0.877)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 25/50
+Train sentence sequences HCNN - INFO - Training one epoch in 32.766 s
+Evaluate stats - INFO - [DEV]   QWK:  0.171, PRS: 0.499, SPR: 0.337, RMSE: 3.564, (Best @ 13: {{0.792}}, 0.811, 0.803, 0.904)
+Evaluate stats - INFO - [TEST]  QWK:  0.180, PRS: 0.508, SPR: 0.323, RMSE: 3.479 (Best @ 13: {{0.789}}, 0.812, 0.794, 0.877)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 26/50
+Train sentence sequences HCNN - INFO - Training one epoch in 26.188 s
+Evaluate stats - INFO - [DEV]   QWK:  0.020, PRS: 0.313, SPR: 0.134, RMSE: 3.768, (Best @ 13: {{0.792}}, 0.811, 0.803, 0.904)
+Evaluate stats - INFO - [TEST]  QWK:  0.053, PRS: 0.343, SPR: 0.135, RMSE: 3.621 (Best @ 13: {{0.789}}, 0.812, 0.794, 0.877)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 27/50
+Train sentence sequences HCNN - INFO - Training one epoch in 26.195 s
+Evaluate stats - INFO - [DEV]   QWK:  0.358, PRS: 0.602, SPR: 0.589, RMSE: 3.569, (Best @ 13: {{0.792}}, 0.811, 0.803, 0.904)
+Evaluate stats - INFO - [TEST]  QWK:  0.334, PRS: 0.589, SPR: 0.558, RMSE: 3.533 (Best @ 13: {{0.789}}, 0.812, 0.794, 0.877)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 28/50
+Train sentence sequences HCNN - INFO - Training one epoch in 27.211 s
+Evaluate stats - INFO - [DEV]   QWK:  0.000, PRS: 0.000, SPR: 0.000, RMSE: 3.815, (Best @ 13: {{0.792}}, 0.811, 0.803, 0.904)
+Evaluate stats - INFO - [TEST]  QWK:  0.000, PRS: 0.000, SPR: 0.000, RMSE: 3.698 (Best @ 13: {{0.789}}, 0.812, 0.794, 0.877)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 29/50
+Train sentence sequences HCNN - INFO - Training one epoch in 24.926 s
+Evaluate stats - INFO - [DEV]   QWK:  0.000, PRS: 0.000, SPR: 0.000, RMSE: 3.815, (Best @ 13: {{0.792}}, 0.811, 0.803, 0.904)
+Evaluate stats - INFO - [TEST]  QWK:  0.000, PRS: 0.000, SPR: 0.000, RMSE: 3.698 (Best @ 13: {{0.789}}, 0.812, 0.794, 0.877)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 30/50
+Train sentence sequences HCNN - INFO - Training one epoch in 27.909 s
+Evaluate stats - INFO - [DEV]   QWK:  0.364, PRS: 0.613, SPR: 0.633, RMSE: 3.819, (Best @ 13: {{0.792}}, 0.811, 0.803, 0.904)
+Evaluate stats - INFO - [TEST]  QWK:  0.340, PRS: 0.582, SPR: 0.588, RMSE: 3.647 (Best @ 13: {{0.789}}, 0.812, 0.794, 0.877)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 31/50
+Train sentence sequences HCNN - INFO - Training one epoch in 40.449 s
+Evaluate stats - INFO - [DEV]   QWK:  0.210, PRS: 0.515, SPR: 0.378, RMSE: 3.547, (Best @ 13: {{0.792}}, 0.811, 0.803, 0.904)
+Evaluate stats - INFO - [TEST]  QWK:  0.180, PRS: 0.508, SPR: 0.323, RMSE: 3.479 (Best @ 13: {{0.789}}, 0.812, 0.794, 0.877)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 32/50
+Train sentence sequences HCNN - INFO - Training one epoch in 35.519 s
+Evaluate stats - INFO - [DEV]   QWK:  0.283, PRS: 0.568, SPR: 0.464, RMSE: 3.496, (Best @ 13: {{0.792}}, 0.811, 0.803, 0.904)
+Evaluate stats - INFO - [TEST]  QWK:  0.275, PRS: 0.600, SPR: 0.490, RMSE: 3.335 (Best @ 13: {{0.789}}, 0.812, 0.794, 0.877)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 33/50
+Train sentence sequences HCNN - INFO - Training one epoch in 34.001 s
+Evaluate stats - INFO - [DEV]   QWK:  0.047, PRS: 0.323, SPR: 0.134, RMSE: 3.741, (Best @ 13: {{0.792}}, 0.811, 0.803, 0.904)
+Evaluate stats - INFO - [TEST]  QWK:  0.053, PRS: 0.343, SPR: 0.135, RMSE: 3.621 (Best @ 13: {{0.789}}, 0.812, 0.794, 0.877)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 34/50
+Train sentence sequences HCNN - INFO - Training one epoch in 26.017 s
+Evaluate stats - INFO - [DEV]   QWK:  0.000, PRS: 0.000, SPR: 0.000, RMSE: 3.815, (Best @ 13: {{0.792}}, 0.811, 0.803, 0.904)
+Evaluate stats - INFO - [TEST]  QWK:  0.000, PRS: 0.000, SPR: 0.000, RMSE: 3.698 (Best @ 13: {{0.789}}, 0.812, 0.794, 0.877)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 35/50
+Train sentence sequences HCNN - INFO - Training one epoch in 24.942 s
+Evaluate stats - INFO - [DEV]   QWK:  0.000, PRS: 0.000, SPR: 0.000, RMSE: 3.815, (Best @ 13: {{0.792}}, 0.811, 0.803, 0.904)
+Evaluate stats - INFO - [TEST]  QWK:  0.000, PRS: 0.000, SPR: 0.000, RMSE: 3.698 (Best @ 13: {{0.789}}, 0.812, 0.794, 0.877)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 36/50
+Train sentence sequences HCNN - INFO - Training one epoch in 25.025 s
+Evaluate stats - INFO - [DEV]   QWK:  0.000, PRS: 0.000, SPR: 0.000, RMSE: 3.815, (Best @ 13: {{0.792}}, 0.811, 0.803, 0.904)
+Evaluate stats - INFO - [TEST]  QWK:  0.000, PRS: 0.000, SPR: 0.000, RMSE: 3.698 (Best @ 13: {{0.789}}, 0.812, 0.794, 0.877)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 37/50
+Train sentence sequences HCNN - INFO - Training one epoch in 25.054 s
+Evaluate stats - INFO - [DEV]   QWK:  0.000, PRS: 0.000, SPR: 0.000, RMSE: 3.815, (Best @ 13: {{0.792}}, 0.811, 0.803, 0.904)
+Evaluate stats - INFO - [TEST]  QWK:  0.000, PRS: 0.000, SPR: 0.000, RMSE: 3.698 (Best @ 13: {{0.789}}, 0.812, 0.794, 0.877)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 38/50
+Train sentence sequences HCNN - INFO - Training one epoch in 24.949 s
+Evaluate stats - INFO - [DEV]   QWK:  0.000, PRS: 0.000, SPR: 0.000, RMSE: 3.815, (Best @ 13: {{0.792}}, 0.811, 0.803, 0.904)
+Evaluate stats - INFO - [TEST]  QWK:  0.000, PRS: 0.000, SPR: 0.000, RMSE: 3.698 (Best @ 13: {{0.789}}, 0.812, 0.794, 0.877)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 39/50
+Train sentence sequences HCNN - INFO - Training one epoch in 25.154 s
+Evaluate stats - INFO - [DEV]   QWK:  0.000, PRS: 0.000, SPR: 0.000, RMSE: 3.815, (Best @ 13: {{0.792}}, 0.811, 0.803, 0.904)
+Evaluate stats - INFO - [TEST]  QWK:  0.000, PRS: 0.000, SPR: 0.000, RMSE: 3.698 (Best @ 13: {{0.789}}, 0.812, 0.794, 0.877)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 40/50
+Train sentence sequences HCNN - INFO - Training one epoch in 24.944 s
+Evaluate stats - INFO - [DEV]   QWK:  0.000, PRS: 0.000, SPR: 0.000, RMSE: 3.815, (Best @ 13: {{0.792}}, 0.811, 0.803, 0.904)
+Evaluate stats - INFO - [TEST]  QWK:  0.000, PRS: 0.000, SPR: 0.000, RMSE: 3.698 (Best @ 13: {{0.789}}, 0.812, 0.794, 0.877)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 41/50
+Train sentence sequences HCNN - INFO - Training one epoch in 24.959 s
+Evaluate stats - INFO - [DEV]   QWK:  0.000, PRS: 0.000, SPR: 0.000, RMSE: 3.815, (Best @ 13: {{0.792}}, 0.811, 0.803, 0.904)
+Evaluate stats - INFO - [TEST]  QWK:  0.000, PRS: 0.000, SPR: 0.000, RMSE: 3.698 (Best @ 13: {{0.789}}, 0.812, 0.794, 0.877)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 42/50
+Train sentence sequences HCNN - INFO - Training one epoch in 24.997 s
+Evaluate stats - INFO - [DEV]   QWK:  0.000, PRS: 0.000, SPR: 0.000, RMSE: 3.815, (Best @ 13: {{0.792}}, 0.811, 0.803, 0.904)
+Evaluate stats - INFO - [TEST]  QWK:  0.000, PRS: 0.000, SPR: 0.000, RMSE: 3.698 (Best @ 13: {{0.789}}, 0.812, 0.794, 0.877)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 43/50
+Train sentence sequences HCNN - INFO - Training one epoch in 25.117 s
+Evaluate stats - INFO - [DEV]   QWK:  0.000, PRS: 0.000, SPR: 0.000, RMSE: 3.815, (Best @ 13: {{0.792}}, 0.811, 0.803, 0.904)
+Evaluate stats - INFO - [TEST]  QWK:  0.000, PRS: 0.000, SPR: 0.000, RMSE: 3.698 (Best @ 13: {{0.789}}, 0.812, 0.794, 0.877)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 44/50
+Train sentence sequences HCNN - INFO - Training one epoch in 24.944 s
+Evaluate stats - INFO - [DEV]   QWK:  0.000, PRS: 0.000, SPR: 0.000, RMSE: 3.815, (Best @ 13: {{0.792}}, 0.811, 0.803, 0.904)
+Evaluate stats - INFO - [TEST]  QWK:  0.000, PRS: 0.000, SPR: 0.000, RMSE: 3.698 (Best @ 13: {{0.789}}, 0.812, 0.794, 0.877)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 45/50
+Train sentence sequences HCNN - INFO - Training one epoch in 24.876 s
+Evaluate stats - INFO - [DEV]   QWK:  0.000, PRS: 0.000, SPR: 0.000, RMSE: 3.815, (Best @ 13: {{0.792}}, 0.811, 0.803, 0.904)
+Evaluate stats - INFO - [TEST]  QWK:  0.000, PRS: 0.000, SPR: 0.000, RMSE: 3.698 (Best @ 13: {{0.789}}, 0.812, 0.794, 0.877)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 46/50
+Train sentence sequences HCNN - INFO - Training one epoch in 24.856 s
+Evaluate stats - INFO - [DEV]   QWK:  0.000, PRS: 0.000, SPR: 0.000, RMSE: 3.815, (Best @ 13: {{0.792}}, 0.811, 0.803, 0.904)
+Evaluate stats - INFO - [TEST]  QWK:  0.000, PRS: 0.000, SPR: 0.000, RMSE: 3.698 (Best @ 13: {{0.789}}, 0.812, 0.794, 0.877)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 47/50
+Train sentence sequences HCNN - INFO - Training one epoch in 24.862 s
+Evaluate stats - INFO - [DEV]   QWK:  0.000, PRS: 0.000, SPR: 0.000, RMSE: 3.815, (Best @ 13: {{0.792}}, 0.811, 0.803, 0.904)
+Evaluate stats - INFO - [TEST]  QWK:  0.000, PRS: 0.000, SPR: 0.000, RMSE: 3.698 (Best @ 13: {{0.789}}, 0.812, 0.794, 0.877)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 48/50
+Train sentence sequences HCNN - INFO - Training one epoch in 24.846 s
+Evaluate stats - INFO - [DEV]   QWK:  0.000, PRS: 0.000, SPR: 0.000, RMSE: 3.815, (Best @ 13: {{0.792}}, 0.811, 0.803, 0.904)
+Evaluate stats - INFO - [TEST]  QWK:  0.000, PRS: 0.000, SPR: 0.000, RMSE: 3.698 (Best @ 13: {{0.789}}, 0.812, 0.794, 0.877)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 49/50
+Train sentence sequences HCNN - INFO - Training one epoch in 25.006 s
+Evaluate stats - INFO - [DEV]   QWK:  0.000, PRS: 0.000, SPR: 0.000, RMSE: 3.815, (Best @ 13: {{0.792}}, 0.811, 0.803, 0.904)
+Evaluate stats - INFO - [TEST]  QWK:  0.000, PRS: 0.000, SPR: 0.000, RMSE: 3.698 (Best @ 13: {{0.789}}, 0.812, 0.794, 0.877)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 50/50
+Train sentence sequences HCNN - INFO - Training one epoch in 24.959 s
+Evaluate stats - INFO - [DEV]   QWK:  0.000, PRS: 0.000, SPR: 0.000, RMSE: 3.815, (Best @ 13: {{0.792}}, 0.811, 0.803, 0.904)
+Evaluate stats - INFO - [TEST]  QWK:  0.000, PRS: 0.000, SPR: 0.000, RMSE: 3.698 (Best @ 13: {{0.789}}, 0.812, 0.794, 0.877)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Evaluate stats - INFO - Best @ Epoch 13:
+Evaluate stats - INFO -   [DEV]  QWK: 0.792,  PRS: 0.811, SPR: 0.803, RMSE: 0.904
+Evaluate stats - INFO -   [TEST] QWK: 0.789,  PRS: 0.812, SPR: 0.794, RMSE: 0.877

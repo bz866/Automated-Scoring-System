@@ -1,0 +1,330 @@
+glove
+Using embedding ../data/glove.6B.50d.txt
+Using embedding ../data/glove.6B.50d.txt
+Using TensorFlow backend.
+Loading data... - INFO - Prompt id is 1
+Loading data... - INFO - Creating vocabulary from: ../data/train.tsv
+Loading data... - INFO -   724840 total words, 16271 unique words
+Loading data... - INFO -   Vocab size: 4000
+Loading data... - INFO - Reading dataset from: ../data/train.tsv
+Loading data... - INFO -   <num> hit rate: 0.00%, <unk> hit rate: 6.13%
+Loading data... - INFO - Reading dataset from: ../data/train.tsv
+Loading data... - INFO -   <num> hit rate: 0.00%, <unk> hit rate: 6.13%
+Loading data... - INFO - Reading dataset from: ../data/train.tsv
+Loading data... - INFO -   <num> hit rate: 0.00%, <unk> hit rate: 6.13%
+Loading data... - INFO - Training data max sentence num = 71, max sentence length = 50
+Loading data... - INFO - Dev data max sentence num = 71, max sentence length = 50
+Loading data... - INFO - Test data max sentence num = 71, max sentence length = 50
+Loading data... - INFO - Overall max sentence num = 71, max sentence length = 50
+Prepare data ... - INFO - Statistics:
+Prepare data ... - INFO -   train X shape: (1783, 71, 50)
+Prepare data ... - INFO -   dev X shape:   (1783, 71, 50)
+Prepare data ... - INFO -   test X shape:  (1783, 71, 50)
+Prepare data ... - INFO -   train Y shape: (1783, 1)
+Prepare data ... - INFO -   dev Y shape:   (1783, 1)
+Prepare data ... - INFO -   test Y shape:  (1783, 1)
+Prepare data ... - INFO -   train_y mean: [ 8.52832317], stdev: [ 1.53813362], train_y mean after scaling: [ 0.65283233]
+Prepare data ... - INFO - Loading GloVe ...
+Prepare data ... - INFO - OOV number =343, OOV ratio = 0.085771
+Train sentence sequences sents-HiLSTM - INFO - X_train shape: (1783, 3550)
+Build model - INFO - Model parameters: max_sentnum = 71, max_sentlen = 50, embedding dim = 50, lstm_units = 100, drop rate = 0.5, l2 = 0.01
+W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use SSE3 instructions, but these are available on your machine and could speed up CPU computations.
+W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use SSE4.1 instructions, but these are available on your machine and could speed up CPU computations.
+W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use SSE4.2 instructions, but these are available on your machine and could speed up CPU computations.
+W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use AVX instructions, but these are available on your machine and could speed up CPU computations.
+W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use AVX2 instructions, but these are available on your machine and could speed up CPU computations.
+W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use FMA instructions, but these are available on your machine and could speed up CPU computations.
+/scratch/yz3464/NLP/aes/hier_lstm.py:48: UserWarning: Update your `Dense` call to the Keras 2 API: `Dense(units=1, activation="sigmoid", name="output")`
+  y = Dense(output_dim=1, activation='sigmoid', name='output')(avg_hz)
+/scratch/yz3464/NLP/aes/hier_lstm.py:50: UserWarning: Update your `Model` call to the Keras 2 API: `Model(outputs=Tensor("ou..., inputs=Tensor("wo...)`
+  model = Model(input=word_input, output=y)
+<class 'tensorflow.python.framework.ops.Tensor'>
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+word_input (InputLayer)      (None, 3550)              0         
+_________________________________________________________________
+x (Embedding)                (None, 3550, 50)          200000    
+_________________________________________________________________
+drop_x (Dropout)             (None, 3550, 50)          0         
+_________________________________________________________________
+resh_W (Reshape)             (None, 71, 50, 50)        0         
+_________________________________________________________________
+z (TimeDistributed)          (None, 71, 50, 100)       60400     
+_________________________________________________________________
+avg_z (TimeDistributed)      (None, 71, 100)           0         
+_________________________________________________________________
+hz (LSTM)                    (None, 71, 100)           80400     
+_________________________________________________________________
+drop_hz (Dropout)            (None, 71, 100)           0         
+_________________________________________________________________
+avg_hz (GlobalAveragePooling (None, 100)               0         
+_________________________________________________________________
+output (Dense)               (None, 1)                 101       
+=================================================================
+Total params: 340,901.0
+Trainable params: 340,901.0
+Non-trainable params: 0.0
+_________________________________________________________________
+Build model - INFO - Model compiled in 0.0130 s
+Train sentence sequences sents-HiLSTM - INFO - Initial evaluation: 
+Evaluate stats - INFO - [DEV]   QWK:  0.000, PRS: 0.000, SPR: 0.000, RMSE: 2.168, (Best @ -1: {{0.000}}, 0.000, 0.000, 2.168)
+Evaluate stats - INFO - [TEST]  QWK:  0.000, PRS: 0.000, SPR: 0.000, RMSE: 2.168 (Best @ -1: {{0.000}}, 0.000, 0.000, 2.168)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences sents-HiLSTM - INFO - Train model
+Train sentence sequences sents-HiLSTM - INFO - Epoch 1/50
+hi_LSTM.py:138: UserWarning: The `nb_epoch` argument in `fit` has been renamed `epochs`.
+  model.fit(X_train, Y_train, batch_size=args.batch_size, nb_epoch=1, verbose=0, shuffle=True)
+Train sentence sequences sents-HiLSTM - INFO - Training one epoch in 217.098 s
+Evaluate stats - INFO - [DEV]   QWK:  0.704, PRS: 0.784, SPR: 0.755, RMSE: 1.051, (Best @ 1: {{0.704}}, 0.784, 0.755, 1.051)
+Evaluate stats - INFO - [TEST]  QWK:  0.704, PRS: 0.784, SPR: 0.755, RMSE: 1.051 (Best @ 1: {{0.704}}, 0.784, 0.755, 1.051)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences sents-HiLSTM - INFO - Epoch 2/50
+Train sentence sequences sents-HiLSTM - INFO - Training one epoch in 217.486 s
+Evaluate stats - INFO - [DEV]   QWK:  0.777, PRS: 0.807, SPR: 0.794, RMSE: 0.946, (Best @ 2: {{0.777}}, 0.807, 0.794, 0.946)
+Evaluate stats - INFO - [TEST]  QWK:  0.777, PRS: 0.807, SPR: 0.794, RMSE: 0.946 (Best @ 2: {{0.777}}, 0.807, 0.794, 0.946)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences sents-HiLSTM - INFO - Epoch 3/50
+Train sentence sequences sents-HiLSTM - INFO - Training one epoch in 217.725 s
+Evaluate stats - INFO - [DEV]   QWK:  0.778, PRS: 0.813, SPR: 0.803, RMSE: 0.954, (Best @ 3: {{0.778}}, 0.813, 0.803, 0.954)
+Evaluate stats - INFO - [TEST]  QWK:  0.778, PRS: 0.813, SPR: 0.803, RMSE: 0.954 (Best @ 3: {{0.778}}, 0.813, 0.803, 0.954)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences sents-HiLSTM - INFO - Epoch 4/50
+Train sentence sequences sents-HiLSTM - INFO - Training one epoch in 217.081 s
+Evaluate stats - INFO - [DEV]   QWK:  0.744, PRS: 0.826, SPR: 0.805, RMSE: 1.065, (Best @ 3: {{0.778}}, 0.813, 0.803, 0.954)
+Evaluate stats - INFO - [TEST]  QWK:  0.744, PRS: 0.826, SPR: 0.805, RMSE: 1.065 (Best @ 3: {{0.778}}, 0.813, 0.803, 0.954)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences sents-HiLSTM - INFO - Epoch 5/50
+Train sentence sequences sents-HiLSTM - INFO - Training one epoch in 217.344 s
+Evaluate stats - INFO - [DEV]   QWK:  0.763, PRS: 0.829, SPR: 0.808, RMSE: 1.010, (Best @ 3: {{0.778}}, 0.813, 0.803, 0.954)
+Evaluate stats - INFO - [TEST]  QWK:  0.763, PRS: 0.829, SPR: 0.808, RMSE: 1.010 (Best @ 3: {{0.778}}, 0.813, 0.803, 0.954)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences sents-HiLSTM - INFO - Epoch 6/50
+Train sentence sequences sents-HiLSTM - INFO - Training one epoch in 217.363 s
+Evaluate stats - INFO - [DEV]   QWK:  0.815, PRS: 0.831, SPR: 0.817, RMSE: 0.875, (Best @ 6: {{0.815}}, 0.831, 0.817, 0.875)
+Evaluate stats - INFO - [TEST]  QWK:  0.815, PRS: 0.831, SPR: 0.817, RMSE: 0.875 (Best @ 6: {{0.815}}, 0.831, 0.817, 0.875)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences sents-HiLSTM - INFO - Epoch 7/50
+Train sentence sequences sents-HiLSTM - INFO - Training one epoch in 218.813 s
+Evaluate stats - INFO - [DEV]   QWK:  0.806, PRS: 0.831, SPR: 0.817, RMSE: 0.860, (Best @ 6: {{0.815}}, 0.831, 0.817, 0.875)
+Evaluate stats - INFO - [TEST]  QWK:  0.806, PRS: 0.831, SPR: 0.817, RMSE: 0.860 (Best @ 6: {{0.815}}, 0.831, 0.817, 0.875)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences sents-HiLSTM - INFO - Epoch 8/50
+Train sentence sequences sents-HiLSTM - INFO - Training one epoch in 218.656 s
+Evaluate stats - INFO - [DEV]   QWK:  0.760, PRS: 0.834, SPR: 0.818, RMSE: 1.047, (Best @ 6: {{0.815}}, 0.831, 0.817, 0.875)
+Evaluate stats - INFO - [TEST]  QWK:  0.760, PRS: 0.834, SPR: 0.818, RMSE: 1.047 (Best @ 6: {{0.815}}, 0.831, 0.817, 0.875)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences sents-HiLSTM - INFO - Epoch 9/50
+Train sentence sequences sents-HiLSTM - INFO - Training one epoch in 218.833 s
+Evaluate stats - INFO - [DEV]   QWK:  0.817, PRS: 0.838, SPR: 0.827, RMSE: 0.843, (Best @ 9: {{0.817}}, 0.838, 0.827, 0.843)
+Evaluate stats - INFO - [TEST]  QWK:  0.817, PRS: 0.838, SPR: 0.827, RMSE: 0.843 (Best @ 9: {{0.817}}, 0.838, 0.827, 0.843)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences sents-HiLSTM - INFO - Epoch 10/50
+Train sentence sequences sents-HiLSTM - INFO - Training one epoch in 218.700 s
+Evaluate stats - INFO - [DEV]   QWK:  0.802, PRS: 0.843, SPR: 0.834, RMSE: 0.943, (Best @ 9: {{0.817}}, 0.838, 0.827, 0.843)
+Evaluate stats - INFO - [TEST]  QWK:  0.802, PRS: 0.843, SPR: 0.834, RMSE: 0.943 (Best @ 9: {{0.817}}, 0.838, 0.827, 0.843)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences sents-HiLSTM - INFO - Epoch 11/50
+Train sentence sequences sents-HiLSTM - INFO - Training one epoch in 218.843 s
+Evaluate stats - INFO - [DEV]   QWK:  0.834, PRS: 0.849, SPR: 0.837, RMSE: 0.821, (Best @ 11: {{0.834}}, 0.849, 0.837, 0.821)
+Evaluate stats - INFO - [TEST]  QWK:  0.834, PRS: 0.849, SPR: 0.837, RMSE: 0.821 (Best @ 11: {{0.834}}, 0.849, 0.837, 0.821)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences sents-HiLSTM - INFO - Epoch 12/50
+Train sentence sequences sents-HiLSTM - INFO - Training one epoch in 218.708 s
+Evaluate stats - INFO - [DEV]   QWK:  0.818, PRS: 0.858, SPR: 0.839, RMSE: 0.839, (Best @ 11: {{0.834}}, 0.849, 0.837, 0.821)
+Evaluate stats - INFO - [TEST]  QWK:  0.818, PRS: 0.858, SPR: 0.839, RMSE: 0.839 (Best @ 11: {{0.834}}, 0.849, 0.837, 0.821)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences sents-HiLSTM - INFO - Epoch 13/50
+Train sentence sequences sents-HiLSTM - INFO - Training one epoch in 218.536 s
+Evaluate stats - INFO - [DEV]   QWK:  0.786, PRS: 0.855, SPR: 0.835, RMSE: 0.986, (Best @ 11: {{0.834}}, 0.849, 0.837, 0.821)
+Evaluate stats - INFO - [TEST]  QWK:  0.786, PRS: 0.855, SPR: 0.835, RMSE: 0.986 (Best @ 11: {{0.834}}, 0.849, 0.837, 0.821)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences sents-HiLSTM - INFO - Epoch 14/50
+Train sentence sequences sents-HiLSTM - INFO - Training one epoch in 218.605 s
+Evaluate stats - INFO - [DEV]   QWK:  0.849, PRS: 0.864, SPR: 0.847, RMSE: 0.792, (Best @ 14: {{0.849}}, 0.864, 0.847, 0.792)
+Evaluate stats - INFO - [TEST]  QWK:  0.849, PRS: 0.864, SPR: 0.847, RMSE: 0.792 (Best @ 14: {{0.849}}, 0.864, 0.847, 0.792)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences sents-HiLSTM - INFO - Epoch 15/50
+Train sentence sequences sents-HiLSTM - INFO - Training one epoch in 218.106 s
+Evaluate stats - INFO - [DEV]   QWK:  0.856, PRS: 0.864, SPR: 0.851, RMSE: 0.834, (Best @ 15: {{0.856}}, 0.864, 0.851, 0.834)
+Evaluate stats - INFO - [TEST]  QWK:  0.856, PRS: 0.864, SPR: 0.851, RMSE: 0.834 (Best @ 15: {{0.856}}, 0.864, 0.851, 0.834)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences sents-HiLSTM - INFO - Epoch 16/50
+Train sentence sequences sents-HiLSTM - INFO - Training one epoch in 218.288 s
+Evaluate stats - INFO - [DEV]   QWK:  0.853, PRS: 0.867, SPR: 0.855, RMSE: 0.834, (Best @ 15: {{0.856}}, 0.864, 0.851, 0.834)
+Evaluate stats - INFO - [TEST]  QWK:  0.853, PRS: 0.867, SPR: 0.855, RMSE: 0.834 (Best @ 15: {{0.856}}, 0.864, 0.851, 0.834)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences sents-HiLSTM - INFO - Epoch 17/50
+Train sentence sequences sents-HiLSTM - INFO - Training one epoch in 218.548 s
+Evaluate stats - INFO - [DEV]   QWK:  0.813, PRS: 0.869, SPR: 0.846, RMSE: 0.882, (Best @ 15: {{0.856}}, 0.864, 0.851, 0.834)
+Evaluate stats - INFO - [TEST]  QWK:  0.813, PRS: 0.869, SPR: 0.846, RMSE: 0.882 (Best @ 15: {{0.856}}, 0.864, 0.851, 0.834)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences sents-HiLSTM - INFO - Epoch 18/50
+Train sentence sequences sents-HiLSTM - INFO - Training one epoch in 218.721 s
+Evaluate stats - INFO - [DEV]   QWK:  0.857, PRS: 0.871, SPR: 0.853, RMSE: 0.773, (Best @ 18: {{0.857}}, 0.871, 0.853, 0.773)
+Evaluate stats - INFO - [TEST]  QWK:  0.857, PRS: 0.871, SPR: 0.853, RMSE: 0.773 (Best @ 18: {{0.857}}, 0.871, 0.853, 0.773)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences sents-HiLSTM - INFO - Epoch 19/50
+Train sentence sequences sents-HiLSTM - INFO - Training one epoch in 218.998 s
+Evaluate stats - INFO - [DEV]   QWK:  0.802, PRS: 0.876, SPR: 0.855, RMSE: 0.958, (Best @ 18: {{0.857}}, 0.871, 0.853, 0.773)
+Evaluate stats - INFO - [TEST]  QWK:  0.802, PRS: 0.876, SPR: 0.855, RMSE: 0.958 (Best @ 18: {{0.857}}, 0.871, 0.853, 0.773)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences sents-HiLSTM - INFO - Epoch 20/50
+Train sentence sequences sents-HiLSTM - INFO - Training one epoch in 219.292 s
+Evaluate stats - INFO - [DEV]   QWK:  0.819, PRS: 0.875, SPR: 0.847, RMSE: 0.863, (Best @ 18: {{0.857}}, 0.871, 0.853, 0.773)
+Evaluate stats - INFO - [TEST]  QWK:  0.819, PRS: 0.875, SPR: 0.847, RMSE: 0.863 (Best @ 18: {{0.857}}, 0.871, 0.853, 0.773)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences sents-HiLSTM - INFO - Epoch 21/50
+Train sentence sequences sents-HiLSTM - INFO - Training one epoch in 219.650 s
+Evaluate stats - INFO - [DEV]   QWK:  0.873, PRS: 0.884, SPR: 0.869, RMSE: 0.743, (Best @ 21: {{0.873}}, 0.884, 0.869, 0.743)
+Evaluate stats - INFO - [TEST]  QWK:  0.873, PRS: 0.884, SPR: 0.869, RMSE: 0.743 (Best @ 21: {{0.873}}, 0.884, 0.869, 0.743)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences sents-HiLSTM - INFO - Epoch 22/50
+Train sentence sequences sents-HiLSTM - INFO - Training one epoch in 219.469 s
+Evaluate stats - INFO - [DEV]   QWK:  0.828, PRS: 0.883, SPR: 0.862, RMSE: 0.873, (Best @ 21: {{0.873}}, 0.884, 0.869, 0.743)
+Evaluate stats - INFO - [TEST]  QWK:  0.828, PRS: 0.883, SPR: 0.862, RMSE: 0.873 (Best @ 21: {{0.873}}, 0.884, 0.869, 0.743)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences sents-HiLSTM - INFO - Epoch 23/50
+Train sentence sequences sents-HiLSTM - INFO - Training one epoch in 219.821 s
+Evaluate stats - INFO - [DEV]   QWK:  0.834, PRS: 0.880, SPR: 0.859, RMSE: 0.814, (Best @ 21: {{0.873}}, 0.884, 0.869, 0.743)
+Evaluate stats - INFO - [TEST]  QWK:  0.834, PRS: 0.880, SPR: 0.859, RMSE: 0.814 (Best @ 21: {{0.873}}, 0.884, 0.869, 0.743)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences sents-HiLSTM - INFO - Epoch 24/50
+Train sentence sequences sents-HiLSTM - INFO - Training one epoch in 219.768 s
+Evaluate stats - INFO - [DEV]   QWK:  0.886, PRS: 0.895, SPR: 0.881, RMSE: 0.687, (Best @ 24: {{0.886}}, 0.895, 0.881, 0.687)
+Evaluate stats - INFO - [TEST]  QWK:  0.886, PRS: 0.895, SPR: 0.881, RMSE: 0.687 (Best @ 24: {{0.886}}, 0.895, 0.881, 0.687)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences sents-HiLSTM - INFO - Epoch 25/50
+Train sentence sequences sents-HiLSTM - INFO - Training one epoch in 219.229 s
+Evaluate stats - INFO - [DEV]   QWK:  0.871, PRS: 0.894, SPR: 0.879, RMSE: 0.747, (Best @ 24: {{0.886}}, 0.895, 0.881, 0.687)
+Evaluate stats - INFO - [TEST]  QWK:  0.871, PRS: 0.894, SPR: 0.879, RMSE: 0.747 (Best @ 24: {{0.886}}, 0.895, 0.881, 0.687)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences sents-HiLSTM - INFO - Epoch 26/50
+Train sentence sequences sents-HiLSTM - INFO - Training one epoch in 220.432 s
+Evaluate stats - INFO - [DEV]   QWK:  0.882, PRS: 0.901, SPR: 0.888, RMSE: 0.683, (Best @ 24: {{0.886}}, 0.895, 0.881, 0.687)
+Evaluate stats - INFO - [TEST]  QWK:  0.882, PRS: 0.901, SPR: 0.888, RMSE: 0.683 (Best @ 24: {{0.886}}, 0.895, 0.881, 0.687)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences sents-HiLSTM - INFO - Epoch 27/50
+Train sentence sequences sents-HiLSTM - INFO - Training one epoch in 219.621 s
+Evaluate stats - INFO - [DEV]   QWK:  0.884, PRS: 0.903, SPR: 0.888, RMSE: 0.689, (Best @ 24: {{0.886}}, 0.895, 0.881, 0.687)
+Evaluate stats - INFO - [TEST]  QWK:  0.884, PRS: 0.903, SPR: 0.888, RMSE: 0.689 (Best @ 24: {{0.886}}, 0.895, 0.881, 0.687)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences sents-HiLSTM - INFO - Epoch 28/50
+Train sentence sequences sents-HiLSTM - INFO - Training one epoch in 219.665 s
+Evaluate stats - INFO - [DEV]   QWK:  0.890, PRS: 0.904, SPR: 0.888, RMSE: 0.684, (Best @ 28: {{0.890}}, 0.904, 0.888, 0.684)
+Evaluate stats - INFO - [TEST]  QWK:  0.890, PRS: 0.904, SPR: 0.888, RMSE: 0.684 (Best @ 28: {{0.890}}, 0.904, 0.888, 0.684)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences sents-HiLSTM - INFO - Epoch 29/50
+Train sentence sequences sents-HiLSTM - INFO - Training one epoch in 219.758 s
+Evaluate stats - INFO - [DEV]   QWK:  0.910, PRS: 0.914, SPR: 0.907, RMSE: 0.626, (Best @ 29: {{0.910}}, 0.914, 0.907, 0.626)
+Evaluate stats - INFO - [TEST]  QWK:  0.910, PRS: 0.914, SPR: 0.907, RMSE: 0.626 (Best @ 29: {{0.910}}, 0.914, 0.907, 0.626)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences sents-HiLSTM - INFO - Epoch 30/50
+Train sentence sequences sents-HiLSTM - INFO - Training one epoch in 219.261 s
+Evaluate stats - INFO - [DEV]   QWK:  0.912, PRS: 0.914, SPR: 0.906, RMSE: 0.626, (Best @ 30: {{0.912}}, 0.914, 0.906, 0.626)
+Evaluate stats - INFO - [TEST]  QWK:  0.912, PRS: 0.914, SPR: 0.906, RMSE: 0.626 (Best @ 30: {{0.912}}, 0.914, 0.906, 0.626)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences sents-HiLSTM - INFO - Epoch 31/50
+Train sentence sequences sents-HiLSTM - INFO - Training one epoch in 219.926 s
+Evaluate stats - INFO - [DEV]   QWK:  0.890, PRS: 0.911, SPR: 0.895, RMSE: 0.689, (Best @ 30: {{0.912}}, 0.914, 0.906, 0.626)
+Evaluate stats - INFO - [TEST]  QWK:  0.890, PRS: 0.911, SPR: 0.895, RMSE: 0.689 (Best @ 30: {{0.912}}, 0.914, 0.906, 0.626)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences sents-HiLSTM - INFO - Epoch 32/50
+Train sentence sequences sents-HiLSTM - INFO - Training one epoch in 219.648 s
+Evaluate stats - INFO - [DEV]   QWK:  0.850, PRS: 0.906, SPR: 0.884, RMSE: 0.786, (Best @ 30: {{0.912}}, 0.914, 0.906, 0.626)
+Evaluate stats - INFO - [TEST]  QWK:  0.850, PRS: 0.906, SPR: 0.884, RMSE: 0.786 (Best @ 30: {{0.912}}, 0.914, 0.906, 0.626)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences sents-HiLSTM - INFO - Epoch 33/50
+Train sentence sequences sents-HiLSTM - INFO - Training one epoch in 219.011 s
+Evaluate stats - INFO - [DEV]   QWK:  0.921, PRS: 0.926, SPR: 0.918, RMSE: 0.585, (Best @ 33: {{0.921}}, 0.926, 0.918, 0.585)
+Evaluate stats - INFO - [TEST]  QWK:  0.921, PRS: 0.926, SPR: 0.918, RMSE: 0.585 (Best @ 33: {{0.921}}, 0.926, 0.918, 0.585)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences sents-HiLSTM - INFO - Epoch 34/50
+Train sentence sequences sents-HiLSTM - INFO - Training one epoch in 218.711 s
+Evaluate stats - INFO - [DEV]   QWK:  0.847, PRS: 0.910, SPR: 0.883, RMSE: 0.817, (Best @ 33: {{0.921}}, 0.926, 0.918, 0.585)
+Evaluate stats - INFO - [TEST]  QWK:  0.847, PRS: 0.910, SPR: 0.883, RMSE: 0.817 (Best @ 33: {{0.921}}, 0.926, 0.918, 0.585)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences sents-HiLSTM - INFO - Epoch 35/50
+Train sentence sequences sents-HiLSTM - INFO - Training one epoch in 219.039 s
+Evaluate stats - INFO - [DEV]   QWK:  0.926, PRS: 0.931, SPR: 0.922, RMSE: 0.565, (Best @ 35: {{0.926}}, 0.931, 0.922, 0.565)
+Evaluate stats - INFO - [TEST]  QWK:  0.926, PRS: 0.931, SPR: 0.922, RMSE: 0.565 (Best @ 35: {{0.926}}, 0.931, 0.922, 0.565)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences sents-HiLSTM - INFO - Epoch 36/50
+Train sentence sequences sents-HiLSTM - INFO - Training one epoch in 218.851 s
+Evaluate stats - INFO - [DEV]   QWK:  0.923, PRS: 0.932, SPR: 0.923, RMSE: 0.576, (Best @ 35: {{0.926}}, 0.931, 0.922, 0.565)
+Evaluate stats - INFO - [TEST]  QWK:  0.923, PRS: 0.932, SPR: 0.923, RMSE: 0.576 (Best @ 35: {{0.926}}, 0.931, 0.922, 0.565)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences sents-HiLSTM - INFO - Epoch 37/50
+Train sentence sequences sents-HiLSTM - INFO - Training one epoch in 218.504 s
+Evaluate stats - INFO - [DEV]   QWK:  0.931, PRS: 0.937, SPR: 0.926, RMSE: 0.542, (Best @ 37: {{0.931}}, 0.937, 0.926, 0.542)
+Evaluate stats - INFO - [TEST]  QWK:  0.931, PRS: 0.937, SPR: 0.926, RMSE: 0.542 (Best @ 37: {{0.931}}, 0.937, 0.926, 0.542)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences sents-HiLSTM - INFO - Epoch 38/50
+Train sentence sequences sents-HiLSTM - INFO - Training one epoch in 219.068 s
+Evaluate stats - INFO - [DEV]   QWK:  0.939, PRS: 0.939, SPR: 0.931, RMSE: 0.535, (Best @ 38: {{0.939}}, 0.939, 0.931, 0.535)
+Evaluate stats - INFO - [TEST]  QWK:  0.939, PRS: 0.939, SPR: 0.931, RMSE: 0.535 (Best @ 38: {{0.939}}, 0.939, 0.931, 0.535)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences sents-HiLSTM - INFO - Epoch 39/50
+Train sentence sequences sents-HiLSTM - INFO - Training one epoch in 219.168 s
+Evaluate stats - INFO - [DEV]   QWK:  0.911, PRS: 0.928, SPR: 0.916, RMSE: 0.645, (Best @ 38: {{0.939}}, 0.939, 0.931, 0.535)
+Evaluate stats - INFO - [TEST]  QWK:  0.911, PRS: 0.928, SPR: 0.916, RMSE: 0.645 (Best @ 38: {{0.939}}, 0.939, 0.931, 0.535)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences sents-HiLSTM - INFO - Epoch 40/50
+Train sentence sequences sents-HiLSTM - INFO - Training one epoch in 219.047 s
+Evaluate stats - INFO - [DEV]   QWK:  0.883, PRS: 0.927, SPR: 0.912, RMSE: 0.780, (Best @ 38: {{0.939}}, 0.939, 0.931, 0.535)
+Evaluate stats - INFO - [TEST]  QWK:  0.883, PRS: 0.927, SPR: 0.912, RMSE: 0.780 (Best @ 38: {{0.939}}, 0.939, 0.931, 0.535)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences sents-HiLSTM - INFO - Epoch 41/50
+Train sentence sequences sents-HiLSTM - INFO - Training one epoch in 219.077 s
+Evaluate stats - INFO - [DEV]   QWK:  0.903, PRS: 0.931, SPR: 0.909, RMSE: 0.651, (Best @ 38: {{0.939}}, 0.939, 0.931, 0.535)
+Evaluate stats - INFO - [TEST]  QWK:  0.903, PRS: 0.931, SPR: 0.909, RMSE: 0.651 (Best @ 38: {{0.939}}, 0.939, 0.931, 0.535)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences sents-HiLSTM - INFO - Epoch 42/50
+Train sentence sequences sents-HiLSTM - INFO - Training one epoch in 219.752 s
+Evaluate stats - INFO - [DEV]   QWK:  0.920, PRS: 0.938, SPR: 0.918, RMSE: 0.603, (Best @ 38: {{0.939}}, 0.939, 0.931, 0.535)
+Evaluate stats - INFO - [TEST]  QWK:  0.920, PRS: 0.938, SPR: 0.918, RMSE: 0.603 (Best @ 38: {{0.939}}, 0.939, 0.931, 0.535)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences sents-HiLSTM - INFO - Epoch 43/50
+Train sentence sequences sents-HiLSTM - INFO - Training one epoch in 219.919 s
+Evaluate stats - INFO - [DEV]   QWK:  0.917, PRS: 0.936, SPR: 0.918, RMSE: 0.613, (Best @ 38: {{0.939}}, 0.939, 0.931, 0.535)
+Evaluate stats - INFO - [TEST]  QWK:  0.917, PRS: 0.936, SPR: 0.918, RMSE: 0.613 (Best @ 38: {{0.939}}, 0.939, 0.931, 0.535)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences sents-HiLSTM - INFO - Epoch 44/50
+Train sentence sequences sents-HiLSTM - INFO - Training one epoch in 219.727 s
+Evaluate stats - INFO - [DEV]   QWK:  0.906, PRS: 0.934, SPR: 0.915, RMSE: 0.671, (Best @ 38: {{0.939}}, 0.939, 0.931, 0.535)
+Evaluate stats - INFO - [TEST]  QWK:  0.906, PRS: 0.934, SPR: 0.915, RMSE: 0.671 (Best @ 38: {{0.939}}, 0.939, 0.931, 0.535)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences sents-HiLSTM - INFO - Epoch 45/50
+Train sentence sequences sents-HiLSTM - INFO - Training one epoch in 219.328 s
+Evaluate stats - INFO - [DEV]   QWK:  0.915, PRS: 0.935, SPR: 0.917, RMSE: 0.610, (Best @ 38: {{0.939}}, 0.939, 0.931, 0.535)
+Evaluate stats - INFO - [TEST]  QWK:  0.915, PRS: 0.935, SPR: 0.917, RMSE: 0.610 (Best @ 38: {{0.939}}, 0.939, 0.931, 0.535)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences sents-HiLSTM - INFO - Epoch 46/50
+Train sentence sequences sents-HiLSTM - INFO - Training one epoch in 220.060 s
+Evaluate stats - INFO - [DEV]   QWK:  0.936, PRS: 0.947, SPR: 0.937, RMSE: 0.530, (Best @ 38: {{0.939}}, 0.939, 0.931, 0.535)
+Evaluate stats - INFO - [TEST]  QWK:  0.936, PRS: 0.947, SPR: 0.937, RMSE: 0.530 (Best @ 38: {{0.939}}, 0.939, 0.931, 0.535)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences sents-HiLSTM - INFO - Epoch 47/50
+Train sentence sequences sents-HiLSTM - INFO - Training one epoch in 219.391 s
+Evaluate stats - INFO - [DEV]   QWK:  0.947, PRS: 0.955, SPR: 0.946, RMSE: 0.481, (Best @ 47: {{0.947}}, 0.955, 0.946, 0.481)
+Evaluate stats - INFO - [TEST]  QWK:  0.947, PRS: 0.955, SPR: 0.946, RMSE: 0.481 (Best @ 47: {{0.947}}, 0.955, 0.946, 0.481)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences sents-HiLSTM - INFO - Epoch 48/50
+Train sentence sequences sents-HiLSTM - INFO - Training one epoch in 219.658 s
+Evaluate stats - INFO - [DEV]   QWK:  0.914, PRS: 0.942, SPR: 0.926, RMSE: 0.668, (Best @ 47: {{0.947}}, 0.955, 0.946, 0.481)
+Evaluate stats - INFO - [TEST]  QWK:  0.914, PRS: 0.942, SPR: 0.926, RMSE: 0.668 (Best @ 47: {{0.947}}, 0.955, 0.946, 0.481)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences sents-HiLSTM - INFO - Epoch 49/50
+Train sentence sequences sents-HiLSTM - INFO - Training one epoch in 219.429 s
+Evaluate stats - INFO - [DEV]   QWK:  0.960, PRS: 0.962, SPR: 0.954, RMSE: 0.426, (Best @ 49: {{0.960}}, 0.962, 0.954, 0.426)
+Evaluate stats - INFO - [TEST]  QWK:  0.960, PRS: 0.962, SPR: 0.954, RMSE: 0.426 (Best @ 49: {{0.960}}, 0.962, 0.954, 0.426)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences sents-HiLSTM - INFO - Epoch 50/50
+Train sentence sequences sents-HiLSTM - INFO - Training one epoch in 219.289 s
+Evaluate stats - INFO - [DEV]   QWK:  0.966, PRS: 0.968, SPR: 0.965, RMSE: 0.391, (Best @ 50: {{0.966}}, 0.968, 0.965, 0.391)
+Evaluate stats - INFO - [TEST]  QWK:  0.966, PRS: 0.968, SPR: 0.965, RMSE: 0.391 (Best @ 50: {{0.966}}, 0.968, 0.965, 0.391)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Evaluate stats - INFO - Best @ Epoch 50:
+Evaluate stats - INFO -   [DEV]  QWK: 0.966,  PRS: 0.968, SPR: 0.965, RMSE: 0.391
+Evaluate stats - INFO -   [TEST] QWK: 0.966,  PRS: 0.968, SPR: 0.965, RMSE: 0.391

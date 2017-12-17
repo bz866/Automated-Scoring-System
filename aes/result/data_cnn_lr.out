@@ -1,0 +1,147 @@
+glove
+Using embedding ../data/glove.6B.50d.txt
+Using TensorFlow backend.
+Loading data... - INFO - Prompt id is 1
+Loading data... - INFO - Creating vocabulary from: ../data/train.tsv
+Loading data... - INFO -   724840 total words, 16271 unique words
+Loading data... - INFO -   Vocab size: 4000
+Loading data... - INFO - Reading dataset from: ../data/train.tsv
+Loading data... - INFO - Reading dataset from: ../data/dev.tsv
+Loading data... - INFO - Reading dataset from: ../data/test.tsv
+Loading data... - INFO - Training data max sentence num = 71, max sentence length = 50
+Loading data... - INFO - Dev data max sentence num = -1, max sentence length = -1
+Loading data... - INFO - Test data max sentence num = -1, max sentence length = -1
+Loading data... - INFO - Overall max sentence num = 71, max sentence length = 50
+/scratch/yz3464/NLP/aes/data_prepare.py:32: RuntimeWarning: Mean of empty slice.
+  dev_mean = y_dev.mean(axis=0)
+/share/apps/numpy/1.13.1/intel/lib/python2.7/site-packages/numpy-1.13.1-py2.7-linux-x86_64.egg/numpy/core/_methods.py:135: RuntimeWarning: Degrees of freedom <= 0 for slice
+  keepdims=keepdims)
+/scratch/yz3464/NLP/aes/data_prepare.py:34: RuntimeWarning: Mean of empty slice.
+  test_mean = y_test.mean(axis=0)
+Prepare data ... - INFO - Statistics:
+Prepare data ... - INFO -   train X shape: (1783, 71, 50)
+Prepare data ... - INFO -   dev X shape:   (0, 71, 50)
+Prepare data ... - INFO -   test X shape:  (0, 71, 50)
+Prepare data ... - INFO -   train Y shape: (1783, 1)
+Prepare data ... - INFO -   dev Y shape:   (0, 1)
+Prepare data ... - INFO -   test Y shape:  (0, 1)
+Prepare data ... - INFO -   train_y mean: [ 8.52832317], stdev: [ 1.53813362], train_y mean after scaling: [ 0.65283233]
+Prepare data ... - INFO - Loading GloVe ...
+Prepare data ... - INFO - OOV number =343, OOV ratio = 0.085771
+Train sentence sequences HCNN - INFO - X_train shape: (1249, 3550)
+Build model - INFO - Model parameters: max_sentnum = 71, max_sentlen = 50, embedding dim = 50, nbfilters = 100, filter1_len = 5, filter2_len = 3, drop rate = 0.5, l2 = 0.01
+W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use SSE3 instructions, but these are available on your machine and could speed up CPU computations.
+W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use SSE4.1 instructions, but these are available on your machine and could speed up CPU computations.
+W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use SSE4.2 instructions, but these are available on your machine and could speed up CPU computations.
+W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use AVX instructions, but these are available on your machine and could speed up CPU computations.
+W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use AVX2 instructions, but these are available on your machine and could speed up CPU computations.
+W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use FMA instructions, but these are available on your machine and could speed up CPU computations.
+/scratch/yz3464/NLP/aes/hier_networks.py:49: UserWarning: Update your `Conv1D` call to the Keras 2 API: `Conv1D(100, 5, padding="valid")`
+  z = TimeDistributed(Convolution1D(opts.nbfilters, opts.filter1_len, border_mode='valid'), name='z')(resh_W)
+/scratch/yz3464/NLP/aes/hier_networks.py:51: UserWarning: Update your `AveragePooling1D` call to the Keras 2 API: `AveragePooling1D(pool_size=46)`
+  avg_z = TimeDistributed(AveragePooling1D(pool_length=L-opts.filter1_len+1), name='avg_z')(z)	# shape= (N, 1, nbfilters)
+/scratch/yz3464/NLP/aes/hier_networks.py:55: UserWarning: Update your `Conv1D` call to the Keras 2 API: `Conv1D(100, 3, padding="valid", name="hz")`
+  hz = Convolution1D(opts.nbfilters, opts.filter2_len, border_mode='valid', name='hz')(resh_z)
+/scratch/yz3464/NLP/aes/hier_networks.py:59: UserWarning: Update your `Dense` call to the Keras 2 API: `Dense(units=1, activation="sigmoid", name="output")`
+  y = Dense(output_dim=1, activation='sigmoid', name='output')(avg_hz)
+/scratch/yz3464/NLP/aes/hier_networks.py:61: UserWarning: Update your `Model` call to the Keras 2 API: `Model(outputs=Tensor("ou..., inputs=Tensor("wo...)`
+  model = Model(input=word_input, output=y)
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+word_input (InputLayer)      (None, 3550)              0         
+_________________________________________________________________
+x (Embedding)                (None, 3550, 50)          200000    
+_________________________________________________________________
+drop_x (Dropout)             (None, 3550, 50)          0         
+_________________________________________________________________
+resh_W (Reshape)             (None, 71, 50, 50)        0         
+_________________________________________________________________
+z (TimeDistributed)          (None, 71, 46, 100)       25100     
+_________________________________________________________________
+avg_z (TimeDistributed)      (None, 71, 1, 100)        0         
+_________________________________________________________________
+resh_z (Reshape)             (None, 71, 100)           0         
+_________________________________________________________________
+hz (Conv1D)                  (None, 69, 100)           30100     
+_________________________________________________________________
+avg_hz (GlobalAveragePooling (None, 100)               0         
+_________________________________________________________________
+output (Dense)               (None, 1)                 101       
+=================================================================
+Total params: 255,301.0
+Trainable params: 255,301.0
+Non-trainable params: 0.0
+_________________________________________________________________
+Build model - INFO - Model compiled in 0.0128 s
+Train sentence sequences HCNN - INFO - Initial evaluation: 
+Evaluate stats - INFO - [DEV]   QWK:  0.000, PRS: 0.000, SPR: 0.000, RMSE: 2.127, (Best @ -1: {{0.000}}, 0.000, 0.000, 2.127)
+Evaluate stats - INFO - [TEST]  QWK:  0.000, PRS: 0.000, SPR: 0.000, RMSE: 2.152 (Best @ -1: {{0.000}}, 0.000, 0.000, 2.152)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Train model
+Train sentence sequences HCNN - INFO - Epoch 1/12
+hi_CNN.py:137: UserWarning: The `nb_epoch` argument in `fit` has been renamed `epochs`.
+  history = model.fit(X_train, Y_train, batch_size=args.batch_size, nb_epoch=1, verbose=0, shuffle=True)
+Train sentence sequences HCNN - INFO - Training one epoch in 26.834 s
+Evaluate stats - INFO - [DEV]   QWK:  0.376, PRS: 0.750, SPR: 0.704, RMSE: 1.896, (Best @ 1: {{0.376}}, 0.750, 0.704, 1.896)
+Evaluate stats - INFO - [TEST]  QWK:  0.363, PRS: 0.762, SPR: 0.702, RMSE: 1.923 (Best @ 1: {{0.363}}, 0.762, 0.702, 1.923)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 2/12
+Train sentence sequences HCNN - INFO - Training one epoch in 26.685 s
+Evaluate stats - INFO - [DEV]   QWK:  0.749, PRS: 0.759, SPR: 0.736, RMSE: 0.996, (Best @ 2: {{0.749}}, 0.759, 0.736, 0.996)
+Evaluate stats - INFO - [TEST]  QWK:  0.778, PRS: 0.786, SPR: 0.754, RMSE: 0.903 (Best @ 2: {{0.778}}, 0.786, 0.754, 0.903)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 3/12
+Train sentence sequences HCNN - INFO - Training one epoch in 26.855 s
+Evaluate stats - INFO - [DEV]   QWK:  0.719, PRS: 0.751, SPR: 0.726, RMSE: 1.017, (Best @ 2: {{0.749}}, 0.759, 0.736, 0.996)
+Evaluate stats - INFO - [TEST]  QWK:  0.760, PRS: 0.781, SPR: 0.760, RMSE: 0.909 (Best @ 2: {{0.778}}, 0.786, 0.754, 0.903)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 4/12
+Train sentence sequences HCNN - INFO - Training one epoch in 26.678 s
+Evaluate stats - INFO - [DEV]   QWK:  0.618, PRS: 0.736, SPR: 0.713, RMSE: 1.064, (Best @ 2: {{0.749}}, 0.759, 0.736, 0.996)
+Evaluate stats - INFO - [TEST]  QWK:  0.667, PRS: 0.765, SPR: 0.744, RMSE: 0.966 (Best @ 2: {{0.778}}, 0.786, 0.754, 0.903)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 5/12
+Train sentence sequences HCNN - INFO - Training one epoch in 26.718 s
+Evaluate stats - INFO - [DEV]   QWK:  0.395, PRS: 0.750, SPR: 0.717, RMSE: 1.981, (Best @ 2: {{0.749}}, 0.759, 0.736, 0.996)
+Evaluate stats - INFO - [TEST]  QWK:  0.397, PRS: 0.794, SPR: 0.751, RMSE: 1.927 (Best @ 2: {{0.778}}, 0.786, 0.754, 0.903)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 6/12
+Train sentence sequences HCNN - INFO - Training one epoch in 26.930 s
+Evaluate stats - INFO - [DEV]   QWK:  0.743, PRS: 0.773, SPR: 0.752, RMSE: 0.993, (Best @ 2: {{0.749}}, 0.759, 0.736, 0.996)
+Evaluate stats - INFO - [TEST]  QWK:  0.789, PRS: 0.810, SPR: 0.786, RMSE: 0.871 (Best @ 2: {{0.778}}, 0.786, 0.754, 0.903)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 7/12
+Train sentence sequences HCNN - INFO - Training one epoch in 26.663 s
+Evaluate stats - INFO - [DEV]   QWK:  0.581, PRS: 0.773, SPR: 0.770, RMSE: 1.585, (Best @ 2: {{0.749}}, 0.759, 0.736, 0.996)
+Evaluate stats - INFO - [TEST]  QWK:  0.613, PRS: 0.795, SPR: 0.788, RMSE: 1.486 (Best @ 2: {{0.778}}, 0.786, 0.754, 0.903)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 8/12
+Train sentence sequences HCNN - INFO - Training one epoch in 26.945 s
+Evaluate stats - INFO - [DEV]   QWK:  0.608, PRS: 0.770, SPR: 0.742, RMSE: 1.271, (Best @ 2: {{0.749}}, 0.759, 0.736, 0.996)
+Evaluate stats - INFO - [TEST]  QWK:  0.619, PRS: 0.803, SPR: 0.781, RMSE: 1.202 (Best @ 2: {{0.778}}, 0.786, 0.754, 0.903)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 9/12
+Train sentence sequences HCNN - INFO - Training one epoch in 26.625 s
+Evaluate stats - INFO - [DEV]   QWK:  0.754, PRS: 0.775, SPR: 0.757, RMSE: 0.972, (Best @ 9: {{0.754}}, 0.775, 0.757, 0.972)
+Evaluate stats - INFO - [TEST]  QWK:  0.755, PRS: 0.778, SPR: 0.755, RMSE: 0.942 (Best @ 9: {{0.755}}, 0.778, 0.755, 0.942)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 10/12
+Train sentence sequences HCNN - INFO - Training one epoch in 26.625 s
+Evaluate stats - INFO - [DEV]   QWK:  0.386, PRS: 0.715, SPR: 0.701, RMSE: 1.644, (Best @ 9: {{0.754}}, 0.775, 0.757, 0.972)
+Evaluate stats - INFO - [TEST]  QWK:  0.415, PRS: 0.754, SPR: 0.766, RMSE: 1.604 (Best @ 9: {{0.755}}, 0.778, 0.755, 0.942)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 11/12
+Train sentence sequences HCNN - INFO - Training one epoch in 26.641 s
+Evaluate stats - INFO - [DEV]   QWK:  0.502, PRS: 0.782, SPR: 0.753, RMSE: 1.716, (Best @ 9: {{0.754}}, 0.775, 0.757, 0.972)
+Evaluate stats - INFO - [TEST]  QWK:  0.503, PRS: 0.807, SPR: 0.778, RMSE: 1.688 (Best @ 9: {{0.755}}, 0.778, 0.755, 0.942)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences HCNN - INFO - Epoch 12/12
+Train sentence sequences HCNN - INFO - Training one epoch in 26.676 s
+Evaluate stats - INFO - [DEV]   QWK:  0.619, PRS: 0.784, SPR: 0.759, RMSE: 1.246, (Best @ 9: {{0.754}}, 0.775, 0.757, 0.972)
+Evaluate stats - INFO - [TEST]  QWK:  0.625, PRS: 0.808, SPR: 0.787, RMSE: 1.185 (Best @ 9: {{0.755}}, 0.778, 0.755, 0.942)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Evaluate stats - INFO - Best @ Epoch 9:
+Evaluate stats - INFO -   [DEV]  QWK: 0.754,  PRS: 0.775, SPR: 0.757, RMSE: 0.972
+Evaluate stats - INFO -   [TEST] QWK: 0.755,  PRS: 0.778, SPR: 0.755, RMSE: 0.942

@@ -1,0 +1,129 @@
+glove
+Using embedding ../data/glove.6B.50d.txt
+Using TensorFlow backend.
+Loading data... - INFO - Prompt id is 1
+Loading data... - INFO - Creating vocabulary from: ../data/train.tsv
+Loading data... - INFO -   724840 total words, 16271 unique words
+Loading data... - INFO -   Vocab size: 4000
+Loading data... - INFO - Reading dataset from: ../data/train.tsv
+Loading data... - INFO -   <num> hit rate: 0.00%, <unk> hit rate: 6.13%
+Loading data... - INFO - Reading dataset from: ../data/train.tsv
+Loading data... - INFO -   <num> hit rate: 0.00%, <unk> hit rate: 6.13%
+Loading data... - INFO - Reading dataset from: ../data/train.tsv
+Loading data... - INFO -   <num> hit rate: 0.00%, <unk> hit rate: 6.13%
+Loading data... - INFO - Training data max sentence num = 71, max sentence length = 50
+Loading data... - INFO - Dev data max sentence num = 71, max sentence length = 50
+Loading data... - INFO - Test data max sentence num = 71, max sentence length = 50
+Loading data... - INFO - Overall max sentence num = 71, max sentence length = 50
+Prepare data ... - INFO - Statistics:
+Prepare data ... - INFO -   train X shape: (1783, 71, 50)
+Prepare data ... - INFO -   dev X shape:   (1783, 71, 50)
+Prepare data ... - INFO -   test X shape:  (1783, 71, 50)
+Prepare data ... - INFO -   train Y shape: (1783, 1)
+Prepare data ... - INFO -   dev Y shape:   (1783, 1)
+Prepare data ... - INFO -   test Y shape:  (1783, 1)
+Prepare data ... - INFO -   train_y mean: [ 8.52832317], stdev: [ 1.53813362], train_y mean after scaling: [ 0.65283233]
+Prepare data ... - INFO - Loading GloVe ...
+Prepare data ... - INFO - OOV number =343, OOV ratio = 0.085771
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - X_train shape: (1783, 3550)
+Build model - INFO - Model parameters: max_sentnum = 71, max_sentlen = 50, embedding dim = 50, nbfilters = 100, filter1_len = 5, drop rate = 0.5
+W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use SSE3 instructions, but these are available on your machine and could speed up CPU computations.
+W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use SSE4.1 instructions, but these are available on your machine and could speed up CPU computations.
+W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use SSE4.2 instructions, but these are available on your machine and could speed up CPU computations.
+W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use AVX instructions, but these are available on your machine and could speed up CPU computations.
+W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use AVX2 instructions, but these are available on your machine and could speed up CPU computations.
+W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use FMA instructions, but these are available on your machine and could speed up CPU computations.
+/scratch/yz3464/NLP/aes/hier_networks.py:103: UserWarning: Update your `Conv1D` call to the Keras 2 API: `Conv1D(100, 5, padding="valid")`
+  zcnn = TimeDistributed(Convolution1D(opts.nbfilters, opts.filter1_len, border_mode='valid'), name='zcnn')(resh_W)
+Build model - INFO - Use attention-pooling on sentence
+(None, 71, 46, 100)
+out (None, 100)
+(None, 71, 100)
+Build model - INFO - Use attention-pooling on text
+/scratch/yz3464/NLP/aes/hier_networks.py:143: UserWarning: Update your `Dense` call to the Keras 2 API: `Dense(units=1, activation="sigmoid", name="output")`
+  y = Dense(output_dim=1, activation='sigmoid', name='output')(avg_hz_lstm)
+/scratch/yz3464/NLP/aes/hier_networks.py:148: UserWarning: Update your `Model` call to the Keras 2 API: `Model(outputs=Tensor("ou..., inputs=Tensor("wo...)`
+  model = Model(input=word_input, output=y)
+out (None, 100)
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+word_input (InputLayer)      (None, 3550)              0         
+_________________________________________________________________
+x (Embedding)                (None, 3550, 50)          200000    
+_________________________________________________________________
+x_maskedout (ZeroMaskedEntri (None, 3550, 50)          0         
+_________________________________________________________________
+drop_x (Dropout)             (None, 3550, 50)          0         
+_________________________________________________________________
+resh_W (Reshape)             (None, 71, 50, 50)        0         
+_________________________________________________________________
+zcnn (TimeDistributed)       (None, 71, 46, 100)       25100     
+_________________________________________________________________
+avg_zcnn (TimeDistributed)   (None, 71, 100)           10100     
+_________________________________________________________________
+hz_lstm (LSTM)               (None, 71, 100)           80400     
+_________________________________________________________________
+avg_hz_lstm (Attention)      (None, 100)               10100     
+_________________________________________________________________
+output (Dense)               (None, 1)                 101       
+=================================================================
+Total params: 325,801.0
+Trainable params: 325,801.0
+Non-trainable params: 0.0
+_________________________________________________________________
+Build model - INFO - Model compiled in 0.0130 s
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Initial evaluation: 
+Traceback (most recent call last):
+  File "hi_LSTM-CNN.py", line 173, in <module>
+    main()
+  File "hi_LSTM-CNN.py", line 144, in main
+    evl.evaluate(model, -1, print_info=True)
+  File "/scratch/yz3464/NLP/aes/evaluator.py", line 65, in evaluate
+    train_pred = model.predict(self.train_x, batch_size=10).squeeze()
+  File "/share/apps/keras/2.0.2/lib/python2.7/site-packages/Keras-2.0.2-py2.7.egg/keras/engine/training.py", line 1572, in predict
+    batch_size=batch_size, verbose=verbose)
+  File "/share/apps/keras/2.0.2/lib/python2.7/site-packages/Keras-2.0.2-py2.7.egg/keras/engine/training.py", line 1202, in _predict_loop
+    batch_outs = f(ins_batch)
+  File "/share/apps/keras/2.0.2/lib/python2.7/site-packages/Keras-2.0.2-py2.7.egg/keras/backend/tensorflow_backend.py", line 2073, in __call__
+    feed_dict=feed_dict)
+  File "/home/yz3464/.local/lib/python2.7/site-packages/tensorflow/python/client/session.py", line 767, in run
+    run_metadata_ptr)
+  File "/home/yz3464/.local/lib/python2.7/site-packages/tensorflow/python/client/session.py", line 965, in _run
+    feed_dict_string, options, run_metadata)
+  File "/home/yz3464/.local/lib/python2.7/site-packages/tensorflow/python/client/session.py", line 1015, in _do_run
+    target_list, options, run_metadata)
+  File "/home/yz3464/.local/lib/python2.7/site-packages/tensorflow/python/client/session.py", line 1035, in _do_call
+    raise type(e)(node_def, op, message)
+tensorflow.python.framework.errors_impl.InvalidArgumentError: In[0].dim(0) and In[1].dim(0) must be the same: [1,100,1] vs [710,46,100]
+	 [[Node: avg_zcnn/MatMul_1 = BatchMatMul[T=DT_FLOAT, adj_x=true, adj_y=true, _device="/job:localhost/replica:0/task:0/cpu:0"](avg_zcnn/Reshape_4, avg_zcnn/Tanh_1)]]
+
+Caused by op u'avg_zcnn/MatMul_1', defined at:
+  File "hi_LSTM-CNN.py", line 173, in <module>
+    main()
+  File "hi_LSTM-CNN.py", line 138, in main
+    model = build_hrcnn_model(args, vocab_size, char_vocabsize+1, max_sentnum, max_sentlen, maxcharlen, embedd_dim, embed_table, True, init_mean_value)
+  File "/scratch/yz3464/NLP/aes/hier_networks.py", line 113, in build_hrcnn_model
+    avg_zcnn = TimeDistributed(Attention(), input_shape =( K.int_shape(zcnn)[1],K.int_shape(zcnn)[2],K.int_shape(zcnn)[3]),name='avg_zcnn')(zcnn)
+  File "/share/apps/keras/2.0.2/lib/python2.7/site-packages/Keras-2.0.2-py2.7.egg/keras/engine/topology.py", line 554, in __call__
+    output = self.call(inputs, **kwargs)
+  File "/share/apps/keras/2.0.2/lib/python2.7/site-packages/Keras-2.0.2-py2.7.egg/keras/layers/wrappers.py", line 136, in call
+    y = self.layer.call(inputs)  # (num_samples * timesteps, ...)
+  File "/scratch/yz3464/NLP/aes/softattention.py", line 66, in call
+    weights = K.batch_dot(self.att_v, K.tanh(y), axes=[0, 2])
+  File "/share/apps/keras/2.0.2/lib/python2.7/site-packages/Keras-2.0.2-py2.7.egg/keras/backend/tensorflow_backend.py", line 915, in batch_dot
+    out = tf.matmul(x, y, adjoint_a=adj_x, adjoint_b=adj_y)
+  File "/home/yz3464/.local/lib/python2.7/site-packages/tensorflow/python/ops/math_ops.py", line 1735, in matmul
+    a, b, adj_x=adjoint_a, adj_y=adjoint_b, name=name)
+  File "/home/yz3464/.local/lib/python2.7/site-packages/tensorflow/python/ops/gen_math_ops.py", line 370, in _batch_mat_mul
+    adj_y=adj_y, name=name)
+  File "/home/yz3464/.local/lib/python2.7/site-packages/tensorflow/python/framework/op_def_library.py", line 763, in apply_op
+    op_def=op_def)
+  File "/home/yz3464/.local/lib/python2.7/site-packages/tensorflow/python/framework/ops.py", line 2327, in create_op
+    original_op=self._default_original_op, op_def=op_def)
+  File "/home/yz3464/.local/lib/python2.7/site-packages/tensorflow/python/framework/ops.py", line 1226, in __init__
+    self._traceback = _extract_stack()
+
+InvalidArgumentError (see above for traceback): In[0].dim(0) and In[1].dim(0) must be the same: [1,100,1] vs [710,46,100]
+	 [[Node: avg_zcnn/MatMul_1 = BatchMatMul[T=DT_FLOAT, adj_x=true, adj_y=true, _device="/job:localhost/replica:0/task:0/cpu:0"](avg_zcnn/Reshape_4, avg_zcnn/Tanh_1)]]
+

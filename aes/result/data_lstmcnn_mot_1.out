@@ -1,0 +1,335 @@
+glove
+Using embedding ../data/glove.6B.50d.txt
+Using TensorFlow backend.
+Loading data... - INFO - Prompt id is 1
+Loading data... - INFO - Creating vocabulary from: ../data/train.tsv
+Loading data... - INFO -   724840 total words, 16271 unique words
+Loading data... - INFO -   Vocab size: 4000
+Loading data... - INFO - Reading dataset from: ../data/train.tsv
+Loading data... - INFO - Reading dataset from: ../data/dev.tsv
+Loading data... - INFO - Reading dataset from: ../data/dev.tsv
+Loading data... - INFO - Training data max sentence num = 71, max sentence length = 50
+Loading data... - INFO - Dev data max sentence num = -1, max sentence length = -1
+Loading data... - INFO - Test data max sentence num = -1, max sentence length = -1
+Loading data... - INFO - Overall max sentence num = 71, max sentence length = 50
+/scratch/yz3464/NLP/aes/data_prepare.py:32: RuntimeWarning: Mean of empty slice.
+  dev_mean = y_dev.mean(axis=0)
+/share/apps/numpy/1.13.1/intel/lib/python2.7/site-packages/numpy-1.13.1-py2.7-linux-x86_64.egg/numpy/core/_methods.py:135: RuntimeWarning: Degrees of freedom <= 0 for slice
+  keepdims=keepdims)
+/scratch/yz3464/NLP/aes/data_prepare.py:34: RuntimeWarning: Mean of empty slice.
+  test_mean = y_test.mean(axis=0)
+Prepare data ... - INFO - Statistics:
+Prepare data ... - INFO -   train X shape: (1783, 71, 50)
+Prepare data ... - INFO -   dev X shape:   (0, 71, 50)
+Prepare data ... - INFO -   test X shape:  (0, 71, 50)
+Prepare data ... - INFO -   train Y shape: (1783, 1)
+Prepare data ... - INFO -   dev Y shape:   (0, 1)
+Prepare data ... - INFO -   test Y shape:  (0, 1)
+Prepare data ... - INFO -   train_y mean: [ 8.52832317], stdev: [ 1.53813362], train_y mean after scaling: [ 0.65283233]
+Prepare data ... - INFO - Loading GloVe ...
+Prepare data ... - INFO - OOV number =343, OOV ratio = 0.085771
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - X_train shape: (1249, 3550)
+Build model - INFO - Model parameters: max_sentnum = 71, max_sentlen = 50, embedding dim = 50, nbfilters = 100, filter1_len = 5, drop rate = 0.5
+W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use SSE3 instructions, but these are available on your machine and could speed up CPU computations.
+W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use SSE4.1 instructions, but these are available on your machine and could speed up CPU computations.
+W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use SSE4.2 instructions, but these are available on your machine and could speed up CPU computations.
+W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use AVX instructions, but these are available on your machine and could speed up CPU computations.
+W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use AVX2 instructions, but these are available on your machine and could speed up CPU computations.
+W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use FMA instructions, but these are available on your machine and could speed up CPU computations.
+/scratch/yz3464/NLP/aes/hier_networks.py:103: UserWarning: Update your `Conv1D` call to the Keras 2 API: `Conv1D(100, 5, padding="valid")`
+  zcnn = TimeDistributed(Convolution1D(opts.nbfilters, opts.filter1_len, border_mode='valid'), name='zcnn')(resh_W)
+Build model - INFO - Use mean-over-time pooling on sentence
+Build model - INFO - Use mean-over-time pooling on text
+/scratch/yz3464/NLP/aes/hier_networks.py:143: UserWarning: Update your `Dense` call to the Keras 2 API: `Dense(units=1, activation="sigmoid", name="output")`
+  y = Dense(output_dim=1, activation='sigmoid', name='output')(avg_hz_lstm)
+/scratch/yz3464/NLP/aes/hier_networks.py:148: UserWarning: Update your `Model` call to the Keras 2 API: `Model(outputs=Tensor("ou..., inputs=Tensor("wo...)`
+  model = Model(input=word_input, output=y)
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+word_input (InputLayer)      (None, 3550)              0         
+_________________________________________________________________
+x (Embedding)                (None, 3550, 50)          200000    
+_________________________________________________________________
+x_maskedout (ZeroMaskedEntri (None, 3550, 50)          0         
+_________________________________________________________________
+drop_x (Dropout)             (None, 3550, 50)          0         
+_________________________________________________________________
+resh_W (Reshape)             (None, 71, 50, 50)        0         
+_________________________________________________________________
+zcnn (TimeDistributed)       (None, 71, 46, 100)       25100     
+_________________________________________________________________
+avg_zcnn (TimeDistributed)   (None, 71, 100)           0         
+_________________________________________________________________
+hz_lstm (LSTM)               (None, 71, 100)           80400     
+_________________________________________________________________
+avg_hz_lstm (GlobalAveragePo (None, 100)               0         
+_________________________________________________________________
+output (Dense)               (None, 1)                 101       
+=================================================================
+Total params: 305,601.0
+Trainable params: 305,601.0
+Non-trainable params: 0.0
+_________________________________________________________________
+Build model - INFO - Model compiled in 0.0124 s
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Initial evaluation: 
+Evaluate stats - INFO - [DEV]   QWK:  0.000, PRS: 0.000, SPR: 0.000, RMSE: 2.127, (Best @ -1: {{0.000}}, 0.000, 0.000, 2.127)
+Evaluate stats - INFO - [TEST]  QWK:  0.000, PRS: 0.000, SPR: 0.000, RMSE: 2.152 (Best @ -1: {{0.000}}, 0.000, 0.000, 2.152)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Train model
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 1/50
+hi_LSTM-CNN.py:161: UserWarning: The `nb_epoch` argument in `fit` has been renamed `epochs`.
+  history = model.fit(X_train, Y_train, batch_size=args.batch_size, nb_epoch=1, verbose=0, shuffle=True)
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 36.984 s
+Evaluate stats - INFO - [DEV]   QWK:  0.662, PRS: 0.740, SPR: 0.732, RMSE: 1.053, (Best @ 1: {{0.662}}, 0.740, 0.732, 1.053)
+Evaluate stats - INFO - [TEST]  QWK:  0.731, PRS: 0.802, SPR: 0.776, RMSE: 0.915 (Best @ 1: {{0.731}}, 0.802, 0.776, 0.915)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 2/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 36.144 s
+Evaluate stats - INFO - [DEV]   QWK:  0.733, PRS: 0.793, SPR: 0.773, RMSE: 1.065, (Best @ 2: {{0.733}}, 0.793, 0.773, 1.065)
+Evaluate stats - INFO - [TEST]  QWK:  0.723, PRS: 0.805, SPR: 0.759, RMSE: 1.057 (Best @ 2: {{0.723}}, 0.805, 0.759, 1.057)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 3/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 35.741 s
+Evaluate stats - INFO - [DEV]   QWK:  0.789, PRS: 0.792, SPR: 0.780, RMSE: 0.942, (Best @ 3: {{0.789}}, 0.792, 0.780, 0.942)
+Evaluate stats - INFO - [TEST]  QWK:  0.814, PRS: 0.817, SPR: 0.785, RMSE: 0.848 (Best @ 3: {{0.814}}, 0.817, 0.785, 0.848)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 4/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 35.769 s
+Evaluate stats - INFO - [DEV]   QWK:  0.780, PRS: 0.806, SPR: 0.791, RMSE: 0.898, (Best @ 3: {{0.789}}, 0.792, 0.780, 0.942)
+Evaluate stats - INFO - [TEST]  QWK:  0.788, PRS: 0.809, SPR: 0.783, RMSE: 0.851 (Best @ 3: {{0.814}}, 0.817, 0.785, 0.848)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 5/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 35.597 s
+Evaluate stats - INFO - [DEV]   QWK:  0.770, PRS: 0.792, SPR: 0.777, RMSE: 0.986, (Best @ 3: {{0.789}}, 0.792, 0.780, 0.942)
+Evaluate stats - INFO - [TEST]  QWK:  0.805, PRS: 0.834, SPR: 0.805, RMSE: 0.887 (Best @ 3: {{0.814}}, 0.817, 0.785, 0.848)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 6/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 35.644 s
+Evaluate stats - INFO - [DEV]   QWK:  0.771, PRS: 0.800, SPR: 0.791, RMSE: 0.920, (Best @ 3: {{0.789}}, 0.792, 0.780, 0.942)
+Evaluate stats - INFO - [TEST]  QWK:  0.772, PRS: 0.797, SPR: 0.770, RMSE: 0.881 (Best @ 3: {{0.814}}, 0.817, 0.785, 0.848)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 7/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 35.676 s
+Evaluate stats - INFO - [DEV]   QWK:  0.741, PRS: 0.793, SPR: 0.780, RMSE: 0.980, (Best @ 3: {{0.789}}, 0.792, 0.780, 0.942)
+Evaluate stats - INFO - [TEST]  QWK:  0.744, PRS: 0.801, SPR: 0.771, RMSE: 0.918 (Best @ 3: {{0.814}}, 0.817, 0.785, 0.848)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 8/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 35.859 s
+Evaluate stats - INFO - [DEV]   QWK:  0.808, PRS: 0.812, SPR: 0.799, RMSE: 0.895, (Best @ 8: {{0.808}}, 0.812, 0.799, 0.895)
+Evaluate stats - INFO - [TEST]  QWK:  0.833, PRS: 0.837, SPR: 0.810, RMSE: 0.797 (Best @ 8: {{0.833}}, 0.837, 0.810, 0.797)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 9/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 35.486 s
+Evaluate stats - INFO - [DEV]   QWK:  0.788, PRS: 0.808, SPR: 0.796, RMSE: 0.892, (Best @ 8: {{0.808}}, 0.812, 0.799, 0.895)
+Evaluate stats - INFO - [TEST]  QWK:  0.793, PRS: 0.809, SPR: 0.780, RMSE: 0.848 (Best @ 8: {{0.833}}, 0.837, 0.810, 0.797)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 10/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 35.379 s
+Evaluate stats - INFO - [DEV]   QWK:  0.758, PRS: 0.798, SPR: 0.774, RMSE: 0.918, (Best @ 8: {{0.808}}, 0.812, 0.799, 0.895)
+Evaluate stats - INFO - [TEST]  QWK:  0.779, PRS: 0.805, SPR: 0.781, RMSE: 0.858 (Best @ 8: {{0.833}}, 0.837, 0.810, 0.797)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 11/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 35.223 s
+Evaluate stats - INFO - [DEV]   QWK:  0.773, PRS: 0.811, SPR: 0.792, RMSE: 0.957, (Best @ 8: {{0.808}}, 0.812, 0.799, 0.895)
+Evaluate stats - INFO - [TEST]  QWK:  0.789, PRS: 0.814, SPR: 0.791, RMSE: 0.903 (Best @ 8: {{0.833}}, 0.837, 0.810, 0.797)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 12/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 35.288 s
+Evaluate stats - INFO - [DEV]   QWK:  0.777, PRS: 0.803, SPR: 0.784, RMSE: 0.916, (Best @ 8: {{0.808}}, 0.812, 0.799, 0.895)
+Evaluate stats - INFO - [TEST]  QWK:  0.772, PRS: 0.788, SPR: 0.759, RMSE: 0.899 (Best @ 8: {{0.833}}, 0.837, 0.810, 0.797)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 13/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 35.546 s
+Evaluate stats - INFO - [DEV]   QWK:  0.802, PRS: 0.810, SPR: 0.795, RMSE: 0.892, (Best @ 8: {{0.808}}, 0.812, 0.799, 0.895)
+Evaluate stats - INFO - [TEST]  QWK:  0.820, PRS: 0.824, SPR: 0.783, RMSE: 0.828 (Best @ 8: {{0.833}}, 0.837, 0.810, 0.797)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 14/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 35.278 s
+Evaluate stats - INFO - [DEV]   QWK:  0.810, PRS: 0.823, SPR: 0.791, RMSE: 0.860, (Best @ 14: {{0.810}}, 0.823, 0.791, 0.860)
+Evaluate stats - INFO - [TEST]  QWK:  0.818, PRS: 0.828, SPR: 0.792, RMSE: 0.811 (Best @ 14: {{0.818}}, 0.828, 0.792, 0.811)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 15/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 35.358 s
+Evaluate stats - INFO - [DEV]   QWK:  0.801, PRS: 0.817, SPR: 0.786, RMSE: 0.874, (Best @ 14: {{0.810}}, 0.823, 0.791, 0.860)
+Evaluate stats - INFO - [TEST]  QWK:  0.800, PRS: 0.816, SPR: 0.778, RMSE: 0.835 (Best @ 14: {{0.818}}, 0.828, 0.792, 0.811)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 16/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 35.750 s
+Evaluate stats - INFO - [DEV]   QWK:  0.795, PRS: 0.827, SPR: 0.804, RMSE: 0.871, (Best @ 14: {{0.810}}, 0.823, 0.791, 0.860)
+Evaluate stats - INFO - [TEST]  QWK:  0.815, PRS: 0.837, SPR: 0.796, RMSE: 0.811 (Best @ 14: {{0.818}}, 0.828, 0.792, 0.811)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 17/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 35.494 s
+Evaluate stats - INFO - [DEV]   QWK:  0.794, PRS: 0.833, SPR: 0.800, RMSE: 0.903, (Best @ 14: {{0.810}}, 0.823, 0.791, 0.860)
+Evaluate stats - INFO - [TEST]  QWK:  0.792, PRS: 0.833, SPR: 0.781, RMSE: 0.884 (Best @ 14: {{0.818}}, 0.828, 0.792, 0.811)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 18/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 35.701 s
+Evaluate stats - INFO - [DEV]   QWK:  0.798, PRS: 0.822, SPR: 0.780, RMSE: 0.898, (Best @ 14: {{0.810}}, 0.823, 0.791, 0.860)
+Evaluate stats - INFO - [TEST]  QWK:  0.807, PRS: 0.820, SPR: 0.780, RMSE: 0.845 (Best @ 14: {{0.818}}, 0.828, 0.792, 0.811)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 19/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 36.034 s
+Evaluate stats - INFO - [DEV]   QWK:  0.794, PRS: 0.811, SPR: 0.783, RMSE: 0.904, (Best @ 14: {{0.810}}, 0.823, 0.791, 0.860)
+Evaluate stats - INFO - [TEST]  QWK:  0.812, PRS: 0.825, SPR: 0.796, RMSE: 0.831 (Best @ 14: {{0.818}}, 0.828, 0.792, 0.811)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 20/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 36.425 s
+Evaluate stats - INFO - [DEV]   QWK:  0.815, PRS: 0.825, SPR: 0.800, RMSE: 0.864, (Best @ 20: {{0.815}}, 0.825, 0.800, 0.864)
+Evaluate stats - INFO - [TEST]  QWK:  0.820, PRS: 0.832, SPR: 0.785, RMSE: 0.814 (Best @ 20: {{0.820}}, 0.832, 0.785, 0.814)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 21/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 35.296 s
+Evaluate stats - INFO - [DEV]   QWK:  0.795, PRS: 0.819, SPR: 0.797, RMSE: 0.884, (Best @ 20: {{0.815}}, 0.825, 0.800, 0.864)
+Evaluate stats - INFO - [TEST]  QWK:  0.810, PRS: 0.825, SPR: 0.773, RMSE: 0.838 (Best @ 20: {{0.820}}, 0.832, 0.785, 0.814)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 22/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 35.376 s
+Evaluate stats - INFO - [DEV]   QWK:  0.821, PRS: 0.821, SPR: 0.799, RMSE: 0.903, (Best @ 22: {{0.821}}, 0.821, 0.799, 0.903)
+Evaluate stats - INFO - [TEST]  QWK:  0.818, PRS: 0.819, SPR: 0.762, RMSE: 0.868 (Best @ 22: {{0.818}}, 0.819, 0.762, 0.868)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 23/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 36.703 s
+Evaluate stats - INFO - [DEV]   QWK:  0.794, PRS: 0.814, SPR: 0.782, RMSE: 0.921, (Best @ 22: {{0.821}}, 0.821, 0.799, 0.903)
+Evaluate stats - INFO - [TEST]  QWK:  0.799, PRS: 0.815, SPR: 0.766, RMSE: 0.877 (Best @ 22: {{0.818}}, 0.819, 0.762, 0.868)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 24/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 34.907 s
+Evaluate stats - INFO - [DEV]   QWK:  0.803, PRS: 0.819, SPR: 0.789, RMSE: 0.906, (Best @ 22: {{0.821}}, 0.821, 0.799, 0.903)
+Evaluate stats - INFO - [TEST]  QWK:  0.808, PRS: 0.816, SPR: 0.785, RMSE: 0.861 (Best @ 22: {{0.818}}, 0.819, 0.762, 0.868)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 25/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 34.988 s
+Evaluate stats - INFO - [DEV]   QWK:  0.791, PRS: 0.829, SPR: 0.793, RMSE: 0.957, (Best @ 22: {{0.821}}, 0.821, 0.799, 0.903)
+Evaluate stats - INFO - [TEST]  QWK:  0.787, PRS: 0.824, SPR: 0.778, RMSE: 0.942 (Best @ 22: {{0.818}}, 0.819, 0.762, 0.868)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 26/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 36.681 s
+Evaluate stats - INFO - [DEV]   QWK:  0.775, PRS: 0.807, SPR: 0.772, RMSE: 0.963, (Best @ 22: {{0.821}}, 0.821, 0.799, 0.903)
+Evaluate stats - INFO - [TEST]  QWK:  0.792, PRS: 0.813, SPR: 0.763, RMSE: 0.930 (Best @ 22: {{0.818}}, 0.819, 0.762, 0.868)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 27/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 37.021 s
+Evaluate stats - INFO - [DEV]   QWK:  0.813, PRS: 0.817, SPR: 0.780, RMSE: 0.898, (Best @ 22: {{0.821}}, 0.821, 0.799, 0.903)
+Evaluate stats - INFO - [TEST]  QWK:  0.826, PRS: 0.830, SPR: 0.781, RMSE: 0.831 (Best @ 22: {{0.818}}, 0.819, 0.762, 0.868)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 28/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 37.378 s
+Evaluate stats - INFO - [DEV]   QWK:  0.813, PRS: 0.824, SPR: 0.781, RMSE: 0.932, (Best @ 22: {{0.821}}, 0.821, 0.799, 0.903)
+Evaluate stats - INFO - [TEST]  QWK:  0.815, PRS: 0.827, SPR: 0.784, RMSE: 0.896 (Best @ 22: {{0.818}}, 0.819, 0.762, 0.868)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 29/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 37.138 s
+Evaluate stats - INFO - [DEV]   QWK:  0.799, PRS: 0.807, SPR: 0.764, RMSE: 0.898, (Best @ 22: {{0.821}}, 0.821, 0.799, 0.903)
+Evaluate stats - INFO - [TEST]  QWK:  0.826, PRS: 0.834, SPR: 0.782, RMSE: 0.797 (Best @ 22: {{0.818}}, 0.819, 0.762, 0.868)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 30/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 37.321 s
+Evaluate stats - INFO - [DEV]   QWK:  0.790, PRS: 0.799, SPR: 0.764, RMSE: 0.921, (Best @ 22: {{0.821}}, 0.821, 0.799, 0.903)
+Evaluate stats - INFO - [TEST]  QWK:  0.813, PRS: 0.819, SPR: 0.778, RMSE: 0.838 (Best @ 22: {{0.818}}, 0.819, 0.762, 0.868)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 31/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 37.136 s
+Evaluate stats - INFO - [DEV]   QWK:  0.799, PRS: 0.808, SPR: 0.769, RMSE: 0.896, (Best @ 22: {{0.821}}, 0.821, 0.799, 0.903)
+Evaluate stats - INFO - [TEST]  QWK:  0.834, PRS: 0.837, SPR: 0.795, RMSE: 0.800 (Best @ 22: {{0.818}}, 0.819, 0.762, 0.868)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 32/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 35.140 s
+Evaluate stats - INFO - [DEV]   QWK:  0.800, PRS: 0.805, SPR: 0.770, RMSE: 0.941, (Best @ 22: {{0.821}}, 0.821, 0.799, 0.903)
+Evaluate stats - INFO - [TEST]  QWK:  0.810, PRS: 0.815, SPR: 0.761, RMSE: 0.887 (Best @ 22: {{0.818}}, 0.819, 0.762, 0.868)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 33/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 35.619 s
+Evaluate stats - INFO - [DEV]   QWK:  0.784, PRS: 0.794, SPR: 0.745, RMSE: 0.938, (Best @ 22: {{0.821}}, 0.821, 0.799, 0.903)
+Evaluate stats - INFO - [TEST]  QWK:  0.830, PRS: 0.834, SPR: 0.798, RMSE: 0.811 (Best @ 22: {{0.818}}, 0.819, 0.762, 0.868)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 34/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 35.203 s
+Evaluate stats - INFO - [DEV]   QWK:  0.776, PRS: 0.794, SPR: 0.755, RMSE: 0.974, (Best @ 22: {{0.821}}, 0.821, 0.799, 0.903)
+Evaluate stats - INFO - [TEST]  QWK:  0.817, PRS: 0.826, SPR: 0.789, RMSE: 0.855 (Best @ 22: {{0.818}}, 0.819, 0.762, 0.868)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 35/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 37.032 s
+Evaluate stats - INFO - [DEV]   QWK:  0.797, PRS: 0.811, SPR: 0.778, RMSE: 0.933, (Best @ 22: {{0.821}}, 0.821, 0.799, 0.903)
+Evaluate stats - INFO - [TEST]  QWK:  0.808, PRS: 0.819, SPR: 0.761, RMSE: 0.868 (Best @ 22: {{0.818}}, 0.819, 0.762, 0.868)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 36/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 36.760 s
+Evaluate stats - INFO - [DEV]   QWK:  0.793, PRS: 0.812, SPR: 0.773, RMSE: 0.954, (Best @ 22: {{0.821}}, 0.821, 0.799, 0.903)
+Evaluate stats - INFO - [TEST]  QWK:  0.800, PRS: 0.818, SPR: 0.764, RMSE: 0.912 (Best @ 22: {{0.818}}, 0.819, 0.762, 0.868)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 37/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 36.830 s
+Evaluate stats - INFO - [DEV]   QWK:  0.784, PRS: 0.796, SPR: 0.752, RMSE: 0.918, (Best @ 22: {{0.821}}, 0.821, 0.799, 0.903)
+Evaluate stats - INFO - [TEST]  QWK:  0.807, PRS: 0.817, SPR: 0.770, RMSE: 0.835 (Best @ 22: {{0.818}}, 0.819, 0.762, 0.868)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 38/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 36.711 s
+Evaluate stats - INFO - [DEV]   QWK:  0.806, PRS: 0.806, SPR: 0.769, RMSE: 0.936, (Best @ 22: {{0.821}}, 0.821, 0.799, 0.903)
+Evaluate stats - INFO - [TEST]  QWK:  0.827, PRS: 0.827, SPR: 0.777, RMSE: 0.855 (Best @ 22: {{0.818}}, 0.819, 0.762, 0.868)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 39/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 36.853 s
+Evaluate stats - INFO - [DEV]   QWK:  0.770, PRS: 0.792, SPR: 0.755, RMSE: 0.970, (Best @ 22: {{0.821}}, 0.821, 0.799, 0.903)
+Evaluate stats - INFO - [TEST]  QWK:  0.812, PRS: 0.826, SPR: 0.786, RMSE: 0.861 (Best @ 22: {{0.818}}, 0.819, 0.762, 0.868)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 40/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 36.940 s
+Evaluate stats - INFO - [DEV]   QWK:  0.795, PRS: 0.796, SPR: 0.754, RMSE: 0.945, (Best @ 22: {{0.821}}, 0.821, 0.799, 0.903)
+Evaluate stats - INFO - [TEST]  QWK:  0.823, PRS: 0.823, SPR: 0.770, RMSE: 0.855 (Best @ 22: {{0.818}}, 0.819, 0.762, 0.868)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 41/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 36.910 s
+Evaluate stats - INFO - [DEV]   QWK:  0.780, PRS: 0.790, SPR: 0.757, RMSE: 0.936, (Best @ 22: {{0.821}}, 0.821, 0.799, 0.903)
+Evaluate stats - INFO - [TEST]  QWK:  0.808, PRS: 0.811, SPR: 0.769, RMSE: 0.864 (Best @ 22: {{0.818}}, 0.819, 0.762, 0.868)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 42/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 36.795 s
+Evaluate stats - INFO - [DEV]   QWK:  0.805, PRS: 0.812, SPR: 0.771, RMSE: 0.906, (Best @ 22: {{0.821}}, 0.821, 0.799, 0.903)
+Evaluate stats - INFO - [TEST]  QWK:  0.820, PRS: 0.823, SPR: 0.770, RMSE: 0.858 (Best @ 22: {{0.818}}, 0.819, 0.762, 0.868)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 43/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 36.854 s
+Evaluate stats - INFO - [DEV]   QWK:  0.802, PRS: 0.820, SPR: 0.775, RMSE: 0.929, (Best @ 22: {{0.821}}, 0.821, 0.799, 0.903)
+Evaluate stats - INFO - [TEST]  QWK:  0.809, PRS: 0.823, SPR: 0.759, RMSE: 0.871 (Best @ 22: {{0.818}}, 0.819, 0.762, 0.868)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 44/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 36.812 s
+Evaluate stats - INFO - [DEV]   QWK:  0.781, PRS: 0.786, SPR: 0.744, RMSE: 0.964, (Best @ 22: {{0.821}}, 0.821, 0.799, 0.903)
+Evaluate stats - INFO - [TEST]  QWK:  0.807, PRS: 0.812, SPR: 0.775, RMSE: 0.861 (Best @ 22: {{0.818}}, 0.819, 0.762, 0.868)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 45/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 36.825 s
+Evaluate stats - INFO - [DEV]   QWK:  0.809, PRS: 0.810, SPR: 0.775, RMSE: 0.929, (Best @ 22: {{0.821}}, 0.821, 0.799, 0.903)
+Evaluate stats - INFO - [TEST]  QWK:  0.819, PRS: 0.822, SPR: 0.769, RMSE: 0.871 (Best @ 22: {{0.818}}, 0.819, 0.762, 0.868)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 46/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 36.818 s
+Evaluate stats - INFO - [DEV]   QWK:  0.782, PRS: 0.802, SPR: 0.754, RMSE: 0.939, (Best @ 22: {{0.821}}, 0.821, 0.799, 0.903)
+Evaluate stats - INFO - [TEST]  QWK:  0.798, PRS: 0.809, SPR: 0.766, RMSE: 0.884 (Best @ 22: {{0.818}}, 0.819, 0.762, 0.868)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 47/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 36.822 s
+Evaluate stats - INFO - [DEV]   QWK:  0.799, PRS: 0.806, SPR: 0.760, RMSE: 0.910, (Best @ 22: {{0.821}}, 0.821, 0.799, 0.903)
+Evaluate stats - INFO - [TEST]  QWK:  0.808, PRS: 0.817, SPR: 0.758, RMSE: 0.848 (Best @ 22: {{0.818}}, 0.819, 0.762, 0.868)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 48/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 36.978 s
+Evaluate stats - INFO - [DEV]   QWK:  0.794, PRS: 0.799, SPR: 0.750, RMSE: 0.944, (Best @ 22: {{0.821}}, 0.821, 0.799, 0.903)
+Evaluate stats - INFO - [TEST]  QWK:  0.801, PRS: 0.803, SPR: 0.749, RMSE: 0.896 (Best @ 22: {{0.818}}, 0.819, 0.762, 0.868)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 49/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 36.874 s
+Evaluate stats - INFO - [DEV]   QWK:  0.796, PRS: 0.813, SPR: 0.761, RMSE: 0.927, (Best @ 22: {{0.821}}, 0.821, 0.799, 0.903)
+Evaluate stats - INFO - [TEST]  QWK:  0.789, PRS: 0.803, SPR: 0.740, RMSE: 0.933 (Best @ 22: {{0.818}}, 0.819, 0.762, 0.868)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Epoch 50/50
+Train sentence sequences Recurrent Convolutional model (LSTM stack over CNN) - INFO - Training one epoch in 36.636 s
+Evaluate stats - INFO - [DEV]   QWK:  0.779, PRS: 0.787, SPR: 0.734, RMSE: 0.947, (Best @ 22: {{0.821}}, 0.821, 0.799, 0.903)
+Evaluate stats - INFO - [TEST]  QWK:  0.808, PRS: 0.813, SPR: 0.762, RMSE: 0.861 (Best @ 22: {{0.818}}, 0.819, 0.762, 0.868)
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Evaluate stats - INFO - --------------------------------------------------------------------------------------------------------------------------
+Evaluate stats - INFO - Best @ Epoch 22:
+Evaluate stats - INFO -   [DEV]  QWK: 0.821,  PRS: 0.821, SPR: 0.799, RMSE: 0.903
+Evaluate stats - INFO -   [TEST] QWK: 0.818,  PRS: 0.819, SPR: 0.762, RMSE: 0.868
