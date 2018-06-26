@@ -2,6 +2,8 @@ import torch
 import torch.nn as nn
 from torch.autograd import Variable
 import torch.nn.functional as F
+import numpy as np
+
 
 class LSTM(nn.Module):
     """Container module with an encoder, a recurrent module, and a decoder."""
@@ -16,13 +18,18 @@ class LSTM(nn.Module):
         self.rnn_type = rnn_type
         self.hidden_size = hidden_size
         self.num_layers = num_layers
-        self.init_weights()
-
-    def init_weights(self, pre_emb=None):
-        initrange = 0.1
-        self.encoder.weight.data.uniform_(-initrange, initrange)
-        self.decoder.bias.data.fill_(0)
-        self.decoder.weight.data.uniform_(-initrange, initrange)
+        self.init_weights(pre_emb)
+        
+    def init_weights(self, pretrained_embedding):
+            initrange = 0.1
+            if(pretrained_embedding is not None):
+                pretrained_embedding = pretrained_embedding.astype(np.float32)
+                pretrained_embedding = torch.from_numpy(pretrained_embedding)
+                self.encoder.weight.data = pretrained_embedding
+            else:
+                self.encoder.weight.data.uniform_(-initrange, initrange)
+            self.decoder.bias.data.fill_(0)
+            self.decoder.weight.data.uniform_(-initrange, initrange)
 
     def forward(self, inputs, hidden):
         emb = self.encoder(inputs)
